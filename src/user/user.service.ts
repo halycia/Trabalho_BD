@@ -41,7 +41,7 @@ export class UserService {
     }
 
     const result = await this.db.query(
-      `INSERT INTO usuario (email, username, name, password, phone)
+      `INSERT INTO usuario (email, username, nome, senha, telefone)
        VALUES ($1, $2, $3, $4, $5)`,
        [novoUsuario.email, novoUsuario.username, novoUsuario.nome, 
         novoUsuario.senha, novoUsuario.telefone ?? null],
@@ -51,7 +51,7 @@ export class UserService {
   }
 
   async findAllUsers(): Promise<User[]> {
-    const result = await this.db.query('SELECT * FROM users');
+    const result = await this.db.query('SELECT * FROM usuario');
     return result.rows as User[];
   }
 

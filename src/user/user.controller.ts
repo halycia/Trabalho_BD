@@ -23,12 +23,7 @@ export class UserController {
 
 @Get()
 async findAll(): Promise<User[]> {
-  try {
     return await this.userService.findAllUsers();
-  } catch (error) {
-    console.error('Error in findAll:', error);
-    throw error;
-  }
 }
 
 @Get('email/:email') 
