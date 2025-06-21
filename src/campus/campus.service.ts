@@ -9,7 +9,7 @@ export class CampusService {
 
   async findOneCampus(nome: string): Promise<Campus | null> {
     const result = await this.db.query(
-      'SELECT * FROM setor WHERE id = $1',
+      'SELECT * FROM campus WHERE nome = $1',
       [nome],
     );
     return result.rows[0] as Campus ?? null;

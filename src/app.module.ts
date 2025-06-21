@@ -8,11 +8,12 @@ import { TestController } from './database/database.controller';
 import { UserModule } from './user/user.module';
 import { SetorModule } from './setor/setor.module';
 import { CampusModule } from './campus/campus.module';
+import { PratoModule } from './prato/prato.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,}),
-      DatabaseModule, UserModule,SetorModule, CampusModule],
+      DatabaseModule, UserModule,SetorModule, CampusModule, PratoModule],
   controllers: [AppController, TestController],
   providers: [AppService, DatabaseService],
 })
