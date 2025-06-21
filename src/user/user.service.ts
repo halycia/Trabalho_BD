@@ -18,7 +18,7 @@ export class UserService {
       'SELECT * FROM usuario WHERE email = $1',
       [email],
     );
-    return result.rows[0] ?? null;
+    return result.rows[0] as User ?? null;
   }
 
   async findUserByUsername(username: string): Promise<User | null> {
@@ -26,16 +26,16 @@ export class UserService {
       'SELECT * FROM usuario WHERE username = $1',
       [username],
     );
-    return result.rows[0] ?? null;
+    return result.rows[0] as User ?? null;
   }
 
-  async createUser(dto: CreateUserDto) {
-    const UserEmail = await this.findUserByEmail(dto.email);
+  async createUser(novoUsuario: CreateUserDto) {
+    const UserEmail = await this.findUserByEmail(novoUsuario.email);
     if (UserEmail) {
       throw new ConflictException('Email já cadastrado');
     }
 
-    const UserUsername = await this.findUserByUsername(dto.username);
+    const UserUsername = await this.findUserByUsername(novoUsuario.username);
     if (UserUsername) {
       throw new ConflictException('Nome de usuário em uso');
     }
@@ -43,15 +43,18 @@ export class UserService {
     const result = await this.db.query(
       `INSERT INTO usuario (email, username, name, password, phone)
        VALUES ($1, $2, $3, $4, $5)`,
-      [dto.email, dto.username, dto.name, dto.password, dto.phone ?? null],
+       [novoUsuario.email, novoUsuario.username, novoUsuario.nome, 
+        novoUsuario.senha, novoUsuario.telefone ?? null],
     );
 
-    return result.rows[0];
+    return result.rows[0] as User;
   }
-    async findAllUsers() {
-    const result = await this.db.query('SELECT * FROM usuario');
-    return result.rows;
+
+  async findAllUsers(): Promise<User[]> {
+    const result = await this.db.query('SELECT * FROM users');
+    return result.rows as User[];
   }
+
 
   async updateUser(email: string, updates: UpdateUserDto) {
     const fields = [];

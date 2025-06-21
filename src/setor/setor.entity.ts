@@ -1,7 +1,5 @@
 export interface Setor {
-  email: string;
-  username: string;
-  name: string;
-  password: string;
-  phone: string | null;
+    id: number,
+    nome: string;
+    telefone: string | null;
 }

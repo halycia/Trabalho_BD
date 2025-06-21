@@ -8,4 +8,4 @@ import { DatabaseService } from '../database/database.service';
   providers: [SetorService, DatabaseService],
   exports: [SetorService], 
 })
-export class UserModule {}
+export class SetorModule {}

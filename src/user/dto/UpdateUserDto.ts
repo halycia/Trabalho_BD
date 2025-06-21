@@ -11,13 +11,13 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString()
-  name?: string;
+  nome?: string;
 
   @IsOptional()
   @IsString()
-  password?: string;
+  senha?: string;
 
   @IsOptional()
   @IsString()
-  phone?: string;
+  telefone: string;
 }

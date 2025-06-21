@@ -10,6 +10,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { UpdateUserDto } from './dto/UpdateUserDto';
+import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
@@ -21,7 +22,7 @@ export class UserController {
   }
 
 @Get()
-async findAll() {
+async findAll(): Promise<User[]> {
   try {
     return await this.userService.findAllUsers();
   } catch (error) {
@@ -30,13 +31,13 @@ async findAll() {
   }
 }
 
-@Get('email/:email')
-  async findByEmail(@Param('email') email: string) {
+@Get('email/:email') 
+  async findByEmail(@Param('email') email: string): Promise<User | null> {
     return this.userService.findUserByEmail(email);
   }
 
   @Get('username/:username')
-  async findByUsername(@Param('username') username: string) {
+  async findByUsername(@Param('username') username: string): Promise<User | null> {
     return this.userService.findUserByUsername(username);
   }
 

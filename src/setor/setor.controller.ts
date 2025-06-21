@@ -5,19 +5,20 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { SetorService } from './setor.service';
+import { Setor } from './setor.entity'; 
 
 @Controller('setor')
 export class SetorController {
-  constructor(private readonly userService: SetorService) {}
+  constructor(private readonly setorService: SetorService) {}
 
 @Get()
-async findAll() {
-    return await this.userService.findAllSetores();
+async findAll() : Promise<Setor[]> {
+    return await this.setorService.findAllSetores();
 }
 
 @Get('id')
-  async findOneSetor(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findOneSetor(id);
+  async findOneSetor(@Param('id', ParseIntPipe) id: number): Promise<Setor | null> {
+    return this.setorService.findOneSetor(id);
   }
 
 }

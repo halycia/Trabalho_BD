@@ -8,12 +8,12 @@ export class CreateUserDto {
   username: string;
 
   @IsNotEmpty({ message: 'Name is required' })
-  name: string;
+  nome: string;
 
   @IsNotEmpty({ message: 'Password is required' })
-  password: string;
+  senha: string;
 
   @IsOptional()
   @IsString()
-  phone?: string;
+  telefone?: string;
 }
