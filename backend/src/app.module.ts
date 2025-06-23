@@ -9,11 +9,12 @@ import { UserModule } from './user/user.module';
 import { SetorModule } from './setor/setor.module';
 import { CampusModule } from './campus/campus.module';
 import { PratoModule } from './prato/prato.module';
+import { FeedbackModule } from './feedback/feedback.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,}),
-      DatabaseModule, UserModule,SetorModule, CampusModule, PratoModule],
+      DatabaseModule, UserModule,SetorModule, FeedbackModule, CampusModule, PratoModule],
   controllers: [AppController, TestController],
   providers: [AppService, DatabaseService],
 })
