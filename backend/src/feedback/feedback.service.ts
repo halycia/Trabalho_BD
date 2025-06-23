@@ -32,8 +32,8 @@ export class FeedbackService {
     }
 
     async createFeedback(newFeedback: CreateFeedbackDto) {
-        const userExists = await this.userService.findUserByEmail(newFeedback.emailUsuario);
-        const setorExists = await this.setorService.findOneSetor(newFeedback.idSetor);
+        const userExists = await this.userService.findUserByEmail(newFeedback.emailusuario);
+        const setorExists = await this.setorService.findOneSetor(newFeedback.idsetor);
         if (!userExists) {
         throw new ConflictException('Não existe usuário com esse email');
         }
@@ -45,19 +45,19 @@ export class FeedbackService {
                 `INSERT INTO feedback (data, texto, tipo, idSetor, emailUsuario)
                 VALUES ($1, $2, $3, $4, $5)`,
                 [newFeedback.data, newFeedback.texto, newFeedback.tipo,
-                newFeedback.idSetor, newFeedback.emailUsuario],
+                newFeedback.idsetor, newFeedback.emailusuario],
             );
         return result.rows[0] as Feedback;
         } 
     }
-    
+
     async updateFeedback(id: number, editedFeedback: UpdateFeedbackDto) {
         const feedbackExists = await this.findOne(id);
         if (!feedbackExists) {
             throw new NotFoundException('Feedback não encontrado');
         }
-        const userExists = await this.userService.findUserByEmail(editedFeedback.emailUsuario);
-        const setorExists = await this.setorService.findOneSetor(editedFeedback.idSetor);
+        const userExists = await this.userService.findUserByEmail(editedFeedback.emailusuario);
+        const setorExists = await this.setorService.findOneSetor(editedFeedback.idsetor);
         if (!userExists) {
             throw new ConflictException('Não existe usuário com esse email');
         }
@@ -69,7 +69,7 @@ export class FeedbackService {
                 `UPDATE feedback SET data = $1, texto = $2, tipo = $3, idSetor = $4, emailUsuario = $5
                 WHERE id = $6`,
                 [editedFeedback.data, editedFeedback.texto, editedFeedback.tipo,
-                editedFeedback.idSetor, editedFeedback.emailUsuario, id],
+                editedFeedback.idsetor, editedFeedback.emailusuario, id],
             );
             return result.rows[0] as Feedback;
         }

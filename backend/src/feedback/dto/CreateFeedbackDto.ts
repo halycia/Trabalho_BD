@@ -1,8 +1,7 @@
 import {IsNotEmpty} from 'class-validator';
 
 export class CreateFeedbackDto {
-  @IsNotEmpty()
-  id: number;
+
 
   @IsNotEmpty()
   data: Date;
@@ -14,8 +13,8 @@ export class CreateFeedbackDto {
   tipo: string;
 
   @IsNotEmpty()
-  idSetor: number;
+  idsetor: number;
 
   @IsNotEmpty()
-  emailUsuario: string;
+  emailusuario: string;
 }
