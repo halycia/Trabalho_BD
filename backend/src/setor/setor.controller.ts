@@ -20,5 +20,8 @@ async findAll() : Promise<Setor[]> {
   async findOneSetor(@Param('id', ParseIntPipe) id: number): Promise<Setor | null> {
     return this.setorService.findOneSetor(id);
   }
-
+@Get('campus/:nomeCampus')
+  async findSetoresByCampus(@Param('nomeCampus') nomeCampus: string): Promise<Setor[]> {
+    return this.setorService.findSetoresByCampus(nomeCampus);
+  }
 }

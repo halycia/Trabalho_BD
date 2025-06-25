@@ -5,3 +5,25 @@ export interface User {
     senha: string,
     telefone: string | null
 }
+
+export interface Campus {
+    nome: string,
+    email: string,
+    endereco: string,
+    telefone: string | null;
+}
+
+export interface Setor {
+    id: number,
+    nome: string;
+    telefone: string | null;
+}
+
+export interface Feedback {
+    id: number,
+    data: Date | string, 
+    texto: string,
+    tipo: string,
+    idsetor: number,
+    emailusuario: string;
+}

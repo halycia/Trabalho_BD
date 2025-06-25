@@ -16,4 +16,11 @@ export class SetorService {
     const result = await this.db.query('SELECT * FROM setor');
     return result.rows as Setor[];
   }
+  async findSetoresByCampus(nomeCampus: string): Promise<Setor[]> {
+    const result = await this.db.query(
+      'SELECT * FROM setor WHERE nomeCampus = $1',
+      [nomeCampus],
+    );
+    return result.rows as Setor[];
+  }
 }

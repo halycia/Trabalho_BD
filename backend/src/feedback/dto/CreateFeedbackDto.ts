@@ -4,7 +4,7 @@ export class CreateFeedbackDto {
 
 
   @IsNotEmpty()
-  data: Date;
+  data: Date | string;
 
   @IsNotEmpty()
   texto: string;

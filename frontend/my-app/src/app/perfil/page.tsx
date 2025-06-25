@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation"; 
+import HeaderLogado from "@/components/headers/logado";
 
 export default function Perfil() {
     const router= useRouter();
@@ -81,9 +82,7 @@ export default function Perfil() {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                console.log("Buscando informações do usuário...");
                 const token = localStorage.getItem('token');
-                console.log("Token:", token);
                 if (token) {
                     const decoded: { sub: string } = jwtDecode(token);
                     const email = decoded.sub;
@@ -115,7 +114,10 @@ export default function Perfil() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-200 flex items-center justify-center">
+
+    <div className="min-h-screen bg-gray-200">
+        <HeaderLogado/>
+        <div className="flex flex-col items-center justify-center pt-4"> {/* Removed min-h-screen from here */}
             <div className="w-2/4 h-1/2 flex flex-row items-center justify-center bg-white rounded-lg shadow-lg p-10">
                 <form onSubmit={handleSubmit} >
                     <label className=" mb-2 text-sm font-medium text-gray-700">Nome</label>
@@ -196,6 +198,7 @@ export default function Perfil() {
                         </button>
                     </div>
                 </form>
+            </div>
             </div>
         </div>
     );
