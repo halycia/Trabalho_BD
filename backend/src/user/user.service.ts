@@ -57,61 +57,57 @@ export class UserService {
 
 
   async updateUser(email: string, updates: UpdateUserDto) {
-    const fields = [];
-    const values = [];
-    let paramIndex = 1;
 
     if (updates.email) {
       const UserEmail = await this.findUserByEmail(updates.email);
-      if (UserEmail){
+      if (UserEmail && UserEmail.email !== email){
         throw new ConflictException('Email já cadastrado');
       }
     }
     if (updates.username) {
       const UserUsername = await this.findUserByUsername(updates.username);
-      if (UserUsername) {
+      if (UserUsername && UserUsername.email !== email) {
         throw new ConflictException('Nome de usuário em uso');
       }
     }
-
-    for (const [key, value] of Object.entries(updates)) {
-      if (value !== undefined) {
-        fields.push(`${key} = $${paramIndex++}`);
-        values.push(value);
-      }
-    }
-
-    if (fields.length === 0) {
-      throw new BadRequestException('Nenhum dado informado para atualização');
-    }
-
-    values.push(email); 
     try {
         const userUpdated = await this.findUserByEmail(email);
         if (!userUpdated) {
             throw new NotFoundException(`Usuário com email ${email} não encontrado`);
         }
       const result = await this.db.query(
-        `UPDATE usuario SET ${fields.join(', ')} WHERE email = $${paramIndex}`,
-        values,
+        `UPDATE usuario 
+        SET nome=$1, email=$2,
+        username=$3, senha=$4,
+        telefone=$5
+         WHERE email = $6`,[
+          updates.nome ?? userUpdated.nome,
+          updates.email ?? userUpdated.email,
+          updates.username ?? userUpdated.username,
+          updates.senha ?? userUpdated.senha,
+          updates.telefone ?? userUpdated.telefone,
+          email
+         ]
       );
 
       return result.rows[0];
     } catch (error: any) {     
+        console.error('Erro ao atualizar usuário:', error);
         throw new InternalServerErrorException('Atualização falhou');
     }
   }
 
   async deleteUser(email: string) {
+    const deletingUser = await this.findUserByEmail(email);
+    if (!deletingUser) {
+            throw new NotFoundException(`Usuário com email ${email} não encontrado`);
+    }
     const result = await this.db.query(
       'DELETE FROM usuario WHERE email = $1',
       [email],
     );
-    const deletedUser = result.rows[0];
-    if (!deletedUser) {
-      return null;
+    return {
+      message: `Usuário com email ${email} deletado com sucesso`,
     }
-    return { deletedUser };
   }
-
 }
