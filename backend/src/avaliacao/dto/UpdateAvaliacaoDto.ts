@@ -2,9 +2,6 @@ import {IsDate, IsOptional, IsString} from 'class-validator';
 
 export class UpdateAvaliacaoDto {
   @IsOptional()
-  id?: number;
-
-  @IsOptional()
   nota?: number;
 
   @IsOptional()
@@ -13,8 +10,5 @@ export class UpdateAvaliacaoDto {
 
   @IsOptional()
   @IsDate({}, { message: 'Invalid date format' })
-  data?: string;
-
-  @IsOptional()
-  curtidas?: number;
+  data?: Date;
 }

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AvaliacaoService } from './avaliacao.service';
 import { CreateAvaliacaoDto } from './dto/CreateAvaliacaoDto';
@@ -23,12 +24,12 @@ export class AvaliacaoController {
 
     @Get()
     async findAll(): Promise<Avaliacao[]> {
-        return await this.avaliacaoService.findAllUsers();
+      return await this.avaliacaoService.findAllAvaliacao();
     }
 
-    @Get('id/:id')
-    async findById(@Param('id') id: number): Promise<Avaliacao | null> {
-    return this.avaliacaoService.findUserById(id);
+    @Get(':id')
+    async findById(@Param('id', ParseIntPipe()) id: number): Promise<Avaliacao | null> {
+      return this.avaliacaoService.findAvaliacaoById(id);
     }
 
     @Patch(':id')
@@ -36,11 +37,11 @@ export class AvaliacaoController {
     @Param('id') id: number,
     @Body() dto: UpdateAvaliacaoDto,
     ) {
-    return this.avaliacaoService.updateUser(id, dto);
+      return this.avaliacaoService.updateAvaliacao(id, dto);
     }
 
     @Delete(':id')
     async delete(@Param('id') id: number) {
-    return this.avaliacaoService.deleteUser(id);
+      return this.avaliacaoService.deleteAvaliacao(id);
     }
 }

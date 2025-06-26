@@ -2,9 +2,6 @@ import {IsDate, IsNotEmpty} from 'class-validator';
 
 export class CreateAvaliacaoDto {
   @IsNotEmpty()
-  id: number;
-
-  @IsNotEmpty()
   nota: number;
 
   @IsNotEmpty()
@@ -12,8 +9,5 @@ export class CreateAvaliacaoDto {
 
   @IsNotEmpty()
   @IsDate()
-  data: string;
-
-  @IsNotEmpty()
-  curtidas: number;
+  data: Date;
 }
