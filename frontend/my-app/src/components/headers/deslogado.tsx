@@ -1,18 +1,20 @@
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import logoUnb from '@/components/logo unb.png';
 
 export default function header_deslogado() {
     const router = useRouter();
     return (
-        <header className="flex justify-between bg-customGreen pb-1 items-center mb-2 min-h-fit ">
-            <div className="flex bg-azulUnb pb-1">
+        <header className="flex justify-between pb-1 items-center mb-2 min-h-fit ">
+            <div className="flex pb-1">
                 <div className="flex justify-between w-screen bg-green-300 py-3  items-center">
                     <Link
                         href="/feed">
                         <Image
-                            src={""||null}
+                            src={logoUnb}
                             alt="Logo da UnB"
                             width={80}
                             height={80}

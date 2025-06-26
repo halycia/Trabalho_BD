@@ -178,15 +178,15 @@ export default function FeedPage() {
                     <span className="text-white text-base pl-1">
                         {textoFeedback.length}/500
                     </span>
-                    <div className="flex mr-6 items-center justify-center">
+                    <div className="flex justify-end items-center w-full mt-6 space-x-4 px-4 pb-2">
                         <button
                             onClick={() => { resetFeedbackModalFields(); toggleFeedbackModal(); }}
-                            className="bg-transparent text-white rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9 flex items-center justify-center"
+                            className="bg-white text-[#4a71ff] border border-[#4a71ff] rounded-lg px-4 py-2 "
                         >
                             Cancelar
                         </button>
                         <button
-                            className="bg-[#A4FED3] text-[#2B895C] ml-1 font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px] flex items-center justify-center"
+                            className="bg-[#A4FED3] text-[#2B895C] rounded-lg px-4 py-2 hover:scale-105 transition-all"
                             onClick={() => {
                                 if (!textoFeedback.trim() || campusSelected === "-1" || setorSelected === "-1" || tipo === "-1") {
                                     toast.error("Preencha todos os campos!");
