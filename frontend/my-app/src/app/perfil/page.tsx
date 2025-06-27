@@ -11,7 +11,6 @@ import HeaderLogado from "@/components/headers/logado";
 export default function Perfil() {
     const router= useRouter();
     const [userInfo, setUserInfo] = useState<User | null>(null);
-    const [isAuth, setIsAuth] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         username: '',
@@ -65,12 +64,8 @@ export default function Perfil() {
                     updateUser
                 );
         } catch (error: any) {
-                    console.error("Full error object:", error);
-         console.error("Response status:", error.response?.status);
-            console.error("Response data:", error.response?.data);
-        console.error("Request config:", error.config);
-        
-
+            toast.error("Erro ao atualizar informações do usuário.");
+            console.log(error);
         }
     }
     useEffect(() => {
