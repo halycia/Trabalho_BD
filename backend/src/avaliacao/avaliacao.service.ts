@@ -26,12 +26,20 @@ export class AvaliacaoService{
         const result = await this.db.query('SELECT * FROM avaliacao');
         return result.rows as Avaliacao[];
     }
+    
+    async findAvalsFromUser(email: string): Promise<Avaliacao[]> {
+        const result = await this.db.query(
+            'SELECT * FROM avaliacao WHERE email = $1',
+            [email],
+        );
+        return result.rows as Avaliacao[];
+    }
 
     async createAvaliacao(newAvaliacao: CreateAvaliacaoDto){
         const result = await this.db.query(
-        `INSERT INTO avaliacao (nota, data, texto)
+        `INSERT INTO avaliacao (nota, dataavaliacao, dataconsumo, texto, emailusuario, nomeprato)
         VALUES ($1, $2, $3)`,
-        [newAvaliacao.nota, newAvaliacao.data, newAvaliacao.texto]);
+        [newAvaliacao.nota, newAvaliacao.dataavaliacao, newAvaliacao.dataconsumo, newAvaliacao.texto, newAvaliacao.emailusuario, newAvaliacao.nomeprato]);
         return result.rows[0] as Avaliacao;
     }
 
@@ -42,7 +50,8 @@ export class AvaliacaoService{
                 'UPDATE avaliacao SET nota = $1, texto = $2, data = $3 WHERE id = $4',[
                     avaliacao.nota ?? updateAvaliacao.nota,
                     avaliacao.texto ?? updateAvaliacao.texto,
-                    avaliacao.data ?? updateAvaliacao.data,
+                    avaliacao.dataconsumo ?? updateAvaliacao.dataconsumo,
+                    avaliacao.dataavaliacao ?? updateAvaliacao.dataavaliacao,
                     id
                 ]
             );

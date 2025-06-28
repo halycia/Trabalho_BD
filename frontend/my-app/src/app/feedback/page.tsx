@@ -230,6 +230,9 @@ export default function UserFeedback() {
                 modalEditFeedback()
             )}
             <div className='flex flex-col items-center justify-center mt-10'>
+                { feedbacks.length > 0 && (
+                    <h1 className='text-2xl font-bold mb-4'>Meus Feedbacks</h1>
+                )}
                 { feedbacks.length > 0 ? (
                     feedbacks.map((feedback) => (
                         <div key={feedback.id} className=" w-full max-w-[95%] bg-[#49ffff] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit">

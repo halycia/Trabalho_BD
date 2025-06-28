@@ -1,14 +1,23 @@
-import {IsDate, IsOptional, IsString} from 'class-validator';
+import {IsDate, IsNotEmpty, IsOptional, IsString} from 'class-validator';
 
 export class UpdateAvaliacaoDto {
-  @IsOptional()
-  nota?: number;
+  @IsNotEmpty()
+  nota: number;
 
-  @IsOptional()
-  @IsString()
-  texto?: string;
+  @IsNotEmpty()
+  texto: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsDate()
-  data?: Date;
+  dataavaliacao: Date;
+
+  @IsNotEmpty()
+  @IsDate()
+  dataconsumo: Date;
+
+  @IsNotEmpty()
+  emailusuario: string;
+  
+  @IsNotEmpty()
+  nomeprato: string;
 }

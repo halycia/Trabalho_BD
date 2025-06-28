@@ -9,5 +9,15 @@ export class CreateAvaliacaoDto {
 
   @IsNotEmpty()
   @IsDate()
-  data: Date;
+  dataavaliacao: Date;
+
+  @IsNotEmpty()
+  @IsDate()
+  dataconsumo: Date;
+
+  @IsNotEmpty()
+  emailusuario: string;
+
+  @IsNotEmpty()
+  nomeprato: string;
 }

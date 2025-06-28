@@ -2,6 +2,8 @@ export interface Avaliacao{
     id: number;
     nota: number;
     texto: string;
-    data: Date;
-    curtidas: number;
+    dataavaliacao: Date | string;
+    dataconsumo: Date | string;
+    emailusuario: string;
+    nomeprato: string;
 }

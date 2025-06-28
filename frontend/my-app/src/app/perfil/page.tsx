@@ -75,9 +75,17 @@ export default function Perfil() {
             }, 2000);
 
         } catch (error: any) {
-            toast.error("Erro ao atualizar informações do usuário.");
-            console.log(error);
-        }
+            if (error.response && error.response.status === 409) {
+                if (error.response.data.message === 'Email já cadastrado') {
+                    toast.error("Este email já está cadastrado!", {
+                        autoClose: 3000,
+                    });
+                } else if (error.response.data.message === 'Nome de usuário em uso') {
+                    toast.error("Este nome de usuário já está em uso!", {
+                        autoClose: 3000,
+                    });
+                } 
+            } 
     }
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -211,4 +219,4 @@ export default function Perfil() {
         </div>
     );
 }
-
+}

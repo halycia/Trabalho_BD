@@ -11,6 +11,7 @@ export default function header_deslogado() {
         <header className="flex justify-between pb-1 items-center mb-2 min-h-fit ">
             <div className="flex pb-1">
                 <div className="flex justify-between w-screen bg-green-300 py-3  items-center">
+                    <div className='flex items-center space-x-4'>
                     <Link
                         href="/feed">
                         <Image
@@ -21,6 +22,11 @@ export default function header_deslogado() {
                             className="w-20 h-10 cursor-pointer ml-5 shadow-md"
                         />
                     </Link>
+                    <h2 className='text-2xl font-bold text-black'>
+                        Feed
+                    </h2>
+
+                    </div>
 
                     <button
                         className="flex items-center bg-blue-700 text-white rounded-[60px] px-4 py-2 mr-2 cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
