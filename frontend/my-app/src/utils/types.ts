@@ -32,9 +32,16 @@ export interface Feedback {
 export interface Avaliacao {
     id: number;
     nota: number;
+    refeicao: string;
     texto: string;
     dataavaliacao: Date | string;
     dataconsumo: Date | string;
     emailusuario: string;
     nomeprato: string;
+}
+
+export interface Prato {
+    nome: string,
+    kcalPrato?: number,
+    icone?: Buffer | null;
 }
