@@ -3,15 +3,14 @@ import {
   ConflictException,
   NotFoundException,
   InternalServerErrorException,
-  BadRequestException,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { UpdateUserDto } from './dto/UpdateUserDto';
-import { User } from './user.entity'; 
+import { User } from './user.entity';
 @Injectable()
 export class UserService {
-  constructor(private db: DatabaseService) {}
+  constructor(private db: DatabaseService) { }
 
   async findUserByEmail(email: string): Promise<User | null> {
     const result = await this.db.query(
@@ -43,8 +42,8 @@ export class UserService {
     const result = await this.db.query(
       `INSERT INTO usuario (email, username, nome, senha, telefone)
        VALUES ($1, $2, $3, $4, $5)`,
-       [novoUsuario.email, novoUsuario.username, novoUsuario.nome, 
-        novoUsuario.senha, novoUsuario.telefone ?? null],
+      [novoUsuario.email, novoUsuario.username, novoUsuario.nome,
+      novoUsuario.senha, novoUsuario.telefone ?? null],
     );
 
     return result.rows[0] as User;
@@ -60,7 +59,7 @@ export class UserService {
 
     if (updates.email) {
       const UserEmail = await this.findUserByEmail(updates.email);
-      if (UserEmail && UserEmail.email !== email){
+      if (UserEmail && UserEmail.email !== email) {
         throw new ConflictException('Email já cadastrado');
       }
     }
@@ -71,36 +70,36 @@ export class UserService {
       }
     }
     try {
-        const userUpdated = await this.findUserByEmail(email);
-        if (!userUpdated) {
-            throw new NotFoundException(`Usuário com email ${email} não encontrado`);
-        }
+      const userUpdated = await this.findUserByEmail(email);
+      if (!userUpdated) {
+        throw new NotFoundException(`Usuário com email ${email} não encontrado`);
+      }
       const result = await this.db.query(
         `UPDATE usuario 
         SET nome=$1, email=$2,
         username=$3, senha=$4,
         telefone=$5
-         WHERE email = $6`,[
-          updates.nome ?? userUpdated.nome,
-          updates.email ?? userUpdated.email,
-          updates.username ?? userUpdated.username,
-          updates.senha ?? userUpdated.senha,
-          updates.telefone ?? userUpdated.telefone,
-          email
-         ]
+         WHERE email = $6 `, [
+        updates.nome ?? userUpdated.nome,
+        updates.email ?? userUpdated.email,
+        updates.username ?? userUpdated.username,
+        updates.senha ?? userUpdated.senha,
+        updates.telefone !== undefined ? updates.telefone : userUpdated.telefone,
+        email
+      ]
       );
 
       return result.rows[0];
-    } catch (error: any) {     
-        console.error('Erro ao atualizar usuário:', error);
-        throw new InternalServerErrorException('Atualização falhou');
+    } catch (error: any) {
+      console.error('Erro ao atualizar usuário:', error);
+      throw new InternalServerErrorException('Atualização falhou');
     }
   }
 
   async deleteUser(email: string) {
     const deletingUser = await this.findUserByEmail(email);
     if (!deletingUser) {
-            throw new NotFoundException(`Usuário com email ${email} não encontrado`);
+      throw new NotFoundException(`Usuário com email ${email} não encontrado`);
     }
     const result = await this.db.query(
       'DELETE FROM usuario WHERE email = $1',

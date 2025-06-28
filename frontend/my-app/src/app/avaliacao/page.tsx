@@ -15,7 +15,7 @@ export default function AvaliacaoPage() {
     const [userInfo, setUserInfo] = useState<User | null>(null);
     const [avaliacaoEdit, setAvaliacaoEdit] = useState<Avaliacao | null>(null);
     const [editAvaliacaoTexto, setEditAvaliacaoTexto] = useState<string>('');
-    const [editAvaliacaoNota, setEditAvaliacaoNota] = useState<number>(0);
+    const [editAvaliacaoNota, setEditAvaliacaoNota] = useState<number>(-1);
     const [editAvaliacaoDataConsumo, setEditAvaliacaoDataConsumo] = useState<Date | null>(null);
     const [isModalEditAvaliacaoOpen, setIsModalEditAvaliacaoOpen] = useState(false);
 
@@ -112,7 +112,7 @@ const toggleModalAvaliacao = () => {
                 <label className="text-white block mb-2">Data de Consumo:</label>
                 <input
                     type="date"
-                    value={editAvaliacaoDataConsumo?.toLocaleDateString('pt-BR')}
+                    value={editAvaliacaoDataConsumo?.toISOString?.()?.split('T')[0]}                    
                     onChange={(e) => setEditAvaliacaoDataConsumo(new Date(e.target.value))}
                     className="w-full p-2 rounded-md border"
                 />
@@ -136,15 +136,20 @@ const toggleModalAvaliacao = () => {
                     <button
                         className="bg-[#A4FED3] text-[#2B895C] rounded-lg px-4 py-2 hover:scale-105 transition-all"
                         onClick={() => {
-                            if (!editAvaliacaoTexto.trim() || editAvaliacaoNota === -1 || !editAvaliacaoDataConsumo) {
+                            if (!editAvaliacaoTexto.trim() || editAvaliacaoNota === -1) {
                                 toast.error("Preencha todos os campos!");
-                            } else {
+                            }
+                            else if(!editAvaliacaoDataConsumo||editAvaliacaoDataConsumo?.toISOString().split('T')[0] > new Date().toISOString().split('T')[0]){
+                                toast.error("Data de consumo inválida!");
+                            }
+                             else {
                                 const editedAvaliacao: Partial<Avaliacao> = {
                                     texto: editAvaliacaoTexto,
                                     nota: editAvaliacaoNota,
                                     emailusuario: userInfo?.email,
                                     dataconsumo: editAvaliacaoDataConsumo.toISOString(),
                                     dataavaliacao: new Date().toISOString(),
+                                    nomeprato: avaliacaoEdit?.nomeprato,
                                 };
                                 editingAvaliacao(editedAvaliacao, avaliacaoEdit?.id ?? 0);
                                 toggleModalAvaliacao();
@@ -182,26 +187,20 @@ const toggleModalAvaliacao = () => {
                     </div>
                 ) : (
                     avaliacoes.map(avaliacao => (
-                        <div key={avaliacao.id} className="w-full max-w-[95%] bg-[#49ffff] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit">
+                        <div key={avaliacao.id} className="w-full max-w-[45%] bg-[#49ffff] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit">
                             <div className="w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
-                                <div className="flex items-center pl-3 pb-[0.7rem] mt-2">
-                                    <div className="pl-1">
+                                <div className="flex flex-col justify-center items-center pl-3 space-y-4 mt-2">
                                         <div className='flex ml-3 items-center'>
                                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">Data da avaliação: {new Date(avaliacao.dataavaliacao).toLocaleDateString()}</span>
                                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex"> Data de consumo: {avaliacao.dataconsumo.toLocaleString()}
-                                            </span>
+                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex"> Data de consumo: {new Date(avaliacao.dataconsumo).toLocaleDateString()}</span> 
+                                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
                                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">Nota: {avaliacao.nota}</span>
                                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
                                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{avaliacao.nomeprato}</span>
                                         </div>
-                                    </div>
                                     <div className='flex flex-col ml-[4.25rem]'>
-                                        <div>
-                                            <div>
                                                 <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap break-words max-w-full">{avaliacao.texto}</p>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -219,7 +218,7 @@ const toggleModalAvaliacao = () => {
                         </button>
                         <button 
                             onClick={() => handleDeleteAvaliacao(avaliacao.id)}
-                            className='bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer'>
+                            className='bg-red-400 text-white px-4 py-2 rounded-md hover:bg-red-700 cursor-pointer'>
                             Excluir
                         </button>
                     </div>

@@ -18,6 +18,5 @@ export class UpdateUserDto {
   senha?: string;
 
   @IsOptional()
-  @IsString()
-  telefone: string;
+  telefone?: string;
 }

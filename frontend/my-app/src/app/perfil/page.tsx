@@ -5,22 +5,22 @@ import { use, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import HeaderLogado from "@/components/headers/logado";
 
 export default function Perfil() {
-    const router= useRouter();
+    const router = useRouter();
     const [userInfo, setUserInfo] = useState<User | null>(null);
-    const [formCadastro, setformEdit] = useState({
+    const [formEdit, setformEdit] = useState({
         email: '',
         username: '',
         nome: '',
         senha: '',
         telefone: ''
     });
-    
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setformEdit({ ...formCadastro, [e.target.name]: e.target.value });
+        setformEdit({ ...formEdit, [e.target.name]: e.target.value });
     };
 
     const handleCancel = () => {
@@ -42,9 +42,9 @@ export default function Perfil() {
     const handleDelete = async () => {
         try {
             const response = await axios.delete(`http://localhost:3000/user/${userInfo?.email}`);
-                toast.success("Conta excluída com sucesso!", {autoClose: 2000});
-                localStorage.removeItem('token');
-                router.push('/feed');
+            toast.success("Conta excluída com sucesso!", { autoClose: 2000 });
+            localStorage.removeItem('token');
+            router.push('/feed');
         } catch (error: any) {
             toast.error("Erro ao excluir conta.");
             console.log(error);
@@ -53,17 +53,17 @@ export default function Perfil() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-                const updateUser = {
-                    email: formCadastro.email,
-                    username: formCadastro.username,
-                    nome: formCadastro.nome,
-                    senha: formCadastro.senha,
-                    telefone: formCadastro.telefone || null
-                }
-                const response = await axios.patch(`http://localhost:3000/user/${userInfo?.email}`,
-                    updateUser
-                );
-                toast.success("Informações do usuário atualizadas com sucesso!", {autoClose: 2000});
+            const updateUser = {
+                email: formEdit.email,
+                username: formEdit.username,
+                nome: formEdit.nome,
+                senha: formEdit.senha,
+                telefone: formEdit.telefone?.trim() === '' ? null : formEdit.telefone
+            }
+            const response = await axios.patch(`http://localhost:3000/user/${userInfo?.email}`,
+                updateUser
+            );
+            toast.success("Informações atualizadas com sucesso!", { autoClose: 2000 });
             const newToken = await axios.post(`http://localhost:3000/auth/login`, {
                 email: updateUser.email,
                 senha: updateUser.senha
@@ -72,7 +72,7 @@ export default function Perfil() {
             localStorage.removeItem('token');
             localStorage.setItem('token', token);
             setTimeout(() => {
-            window.location.reload();
+                window.location.reload();
             }, 2000);
 
         } catch (error: any) {
@@ -85,21 +85,25 @@ export default function Perfil() {
                     toast.error("Este nome de usuário já está em uso!", {
                         autoClose: 3000,
                     });
-                } 
-            } 
-    }}
+                }
+            } else {
+                toast.error("Erro ao atualizar informações do usuário.");
+            }
+        }
+    }
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (!token){
+        if (!token) {
             router.push('/login');
-        }},[]);
+        }
+    }, []);
 
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
                 const token = localStorage.getItem('token');
                 console.log("Token:", token);
-                
+
                 if (token) {
                     const decoded: { sub: string } = jwtDecode(token);
                     const email = decoded.sub;
@@ -130,9 +134,7 @@ export default function Perfil() {
     if (!userInfo) {
         return <div> Carregando </div>
     }
-
-    return (
-
+return(
     <div className="min-h-screen bg-gray-200">
         <HeaderLogado/>
         <div className="flex flex-col items-center justify-center pt-4"> 
@@ -144,7 +146,7 @@ export default function Perfil() {
                         <input
                             type="text"
                             name="nome"
-                            value={formCadastro.nome}
+                            value={formEdit.nome}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                             required
@@ -155,7 +157,7 @@ export default function Perfil() {
                         <input
                             type="email"
                             name="email"
-                            value={formCadastro.email}
+                            value={formEdit.email}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                             required
@@ -167,7 +169,7 @@ export default function Perfil() {
                         <input
                             type="password"
                             name="senha"
-                            value={formCadastro.senha}
+                            value={formEdit.senha}
                             onChange={handleChange}
                             placeholder="********"
                             className="pl-2 w-full"
@@ -179,7 +181,7 @@ export default function Perfil() {
                         <input
                             type="text"
                             name="username"
-                            value={formCadastro.username}
+                            value={formEdit.username}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                             required
@@ -190,7 +192,7 @@ export default function Perfil() {
                         <input
                             type="text"
                             name="telefone"
-                            value={formCadastro.telefone || ""}
+                            value={formEdit.telefone || ""}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                         />

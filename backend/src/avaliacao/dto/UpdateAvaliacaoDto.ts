@@ -1,4 +1,4 @@
-import {IsDate, IsNotEmpty, IsOptional, IsString} from 'class-validator';
+import {IsNotEmpty} from 'class-validator';
 
 export class UpdateAvaliacaoDto {
   @IsNotEmpty()
@@ -8,12 +8,10 @@ export class UpdateAvaliacaoDto {
   texto: string;
 
   @IsNotEmpty()
-  @IsDate()
-  dataavaliacao: Date;
+  dataavaliacao: Date | string;
 
   @IsNotEmpty()
-  @IsDate()
-  dataconsumo: Date;
+  dataconsumo: Date | string;
 
   @IsNotEmpty()
   emailusuario: string;
