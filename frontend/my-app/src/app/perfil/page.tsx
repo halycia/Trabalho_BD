@@ -69,6 +69,7 @@ export default function Perfil() {
                 senha: updateUser.senha
             });
             const { token } = newToken.data;
+            localStorage.removeItem('token');
             localStorage.setItem('token', token);
             setTimeout(() => {
             window.location.reload();
@@ -86,7 +87,7 @@ export default function Perfil() {
                     });
                 } 
             } 
-    }
+    }}
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token){
@@ -97,9 +98,12 @@ export default function Perfil() {
         const fetchUserInfo = async () => {
             try {
                 const token = localStorage.getItem('token');
+                console.log("Token:", token);
+                
                 if (token) {
                     const decoded: { sub: string } = jwtDecode(token);
                     const email = decoded.sub;
+                    console.log("Email decodificado:", email);
                     const userResponse: User = (await axios.get(`http://localhost:3000/user/email/${email}`)).data;
                     setUserInfo(userResponse);
                 }
@@ -218,5 +222,4 @@ export default function Perfil() {
             </div>
         </div>
     );
-}
 }

@@ -29,7 +29,7 @@ export class AvaliacaoService{
     
     async findAvalsFromUser(email: string): Promise<Avaliacao[]> {
         const result = await this.db.query(
-            'SELECT * FROM avaliacao WHERE email = $1',
+            'SELECT * FROM avaliacao WHERE emailusuario = $1',
             [email],
         );
         return result.rows as Avaliacao[];

@@ -20,14 +20,7 @@ export default function UserFeedback() {
     const [editFeedbackTipo, setEditFeedbackTipo] = useState<string>('');
     const [campusEditFeedback, setCampusEditFeedback] = useState<string>('');
     const [nomeCampus, setNomeCampus] = useState<Map<number, string>>(new Map());
-    const findNomeCampus = async (idSetor: number) => {
-        try {
-            const response = await axios.get(`http://localhost:3000/setor/${idSetor}`);
-            setNomeCampus(prev => new Map(prev).set(idSetor, response.data.nomecampus));
-        } catch (error) {
-            toast.error("Erro ao buscar nome do campus");
-        }
-    }
+
     const findCampusEditFeedback = async (idSetor: number) => {
         try {
             const response = await axios.get(`http://localhost:3000/setor/${idSetor}`);
@@ -200,9 +193,7 @@ export default function UserFeedback() {
                                     emailusuario: userInfo?.email,
                                     data: new Date().toISOString(),
                                 };
-                                
-                                console.log(editedFeedback);
-                                editingFeedback(editedFeedback, feedbackEscolhido?.id ?? 0);
+                              editingFeedback(editedFeedback, feedbackEscolhido?.id ?? 0);
                             }
                         }}
                     >
@@ -235,9 +226,9 @@ export default function UserFeedback() {
                 )}
                 { feedbacks.length > 0 ? (
                     feedbacks.map((feedback) => (
-                        <div key={feedback.id} className=" w-full max-w-[95%] bg-[#49ffff] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit">
+                        <div key={feedback.id} className=" w-full max-w-[40%] bg-[#49ffff] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit">
                             <div className=" w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
-                                <div className="flex items-center pl-3 pb-[0.7rem] mt-2">
+                                <div className="flex flex-col space-y-5 items-center pl-3 mt-2">
                                     <div className="pl-1">
                                         <div className='flex ml-3 items-center'>
                                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{new Date(feedback.data).toLocaleDateString()} </span>
@@ -256,32 +247,23 @@ export default function UserFeedback() {
                                             <div>
                                                 <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap break-words max-w-full">{feedback.texto}</p>
                                             </div>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex">
-                                                <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 
-                                                    Feedback
-                                                </span>                                     
-                                            </div>
-                                            <div className="flex pr-2">             
-                                            </div>
                                         </div>  
                                     </div>
                                 </div>
                             </div>
-                            <div className='flex justify-between items-center px-4 py-2'>
+                            <div className='flex justify-center space-x-4 items-center px-4 py-2'>
                             <button 
                             onClick={()=> { setFeedbackEscolhido(feedback); 
                                             setFeedbackEscolhidoTexto(feedback.texto);
                                             setEditFeedbackTipo(feedback.tipo); 
                                             findCampusEditFeedback(feedback.idsetor);
                                             toggleModalEditFeedback() }}
-                            className='bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600'>
+                            className='bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer'>
                                 Editar
                             </button>
                             <button 
                             onClick={() => handleDeleteFeedback(feedback.id)}
-                            className='bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600'>
+                            className='bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer'>
                                 Excluir
                             </button>
                             </div>

@@ -27,15 +27,17 @@ export class AvaliacaoController {
       return await this.avaliacaoService.findAllAvaliacao();
     }
 
+    @Get ('user/:email')
+        async findAvalsFromUser(@Param('email') email: string): Promise<Avaliacao[]> {
+      return this.avaliacaoService.findAvalsFromUser(email);
+    }
+
+
     @Get(':id')
     async findById(@Param('id', ParseIntPipe) id: number): Promise<Avaliacao | null> {
       return this.avaliacaoService.findAvaliacaoById(id);
     }
 
-    @Get ('user/:email')
-    async findAvalsFromUser(@Param('email') email: string): Promise<Avaliacao[]> {
-      return this.avaliacaoService.findAvalsFromUser(email);
-    }
 
     @Patch(':id')
     async update(
