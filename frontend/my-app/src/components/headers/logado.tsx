@@ -30,7 +30,7 @@ export default function header_logado() {
                     </button>
                                         <button>
                         <Link
-                            href="/perfil"
+                            href="/feedback"
                             className="flex items-center bg-white text-black rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
                         >
                             Ver feedbacks

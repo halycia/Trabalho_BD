@@ -59,7 +59,11 @@ export default function LoginPage() {
                 }}
             />
             <div className="w-1/2 bg-gray-100 flex items-center justify-center">
-                <div className="w-3/4 bg-white p-10 rounded-lg shadow-lg">
+                <div className="w-3/4 p-10 rounded-lg shadow-lg">
+                                <h1 className='text-4xl font-bold mb-6 text-center'>
+                    AvaliaRU
+                </h1>
+
                     <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
                     <form onSubmit={handleSubmit}>

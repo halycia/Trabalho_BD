@@ -28,7 +28,7 @@ export class AvaliacaoController {
     }
 
     @Get(':id')
-    async findById(@Param('id', ParseIntPipe()) id: number): Promise<Avaliacao | null> {
+    async findById(@Param('id', ParseIntPipe) id: number): Promise<Avaliacao | null> {
       return this.avaliacaoService.findAvaliacaoById(id);
     }
 

@@ -9,6 +9,6 @@ export class UpdateAvaliacaoDto {
   texto?: string;
 
   @IsOptional()
-  @IsDate({}, { message: 'Invalid date format' })
+  @IsDate()
   data?: Date;
 }

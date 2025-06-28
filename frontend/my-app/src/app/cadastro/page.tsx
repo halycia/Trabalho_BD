@@ -6,27 +6,27 @@ import { toast } from 'react-toastify';
 import Link from 'next/link';
 
 export default function LoginPage() {
-    const [formData, setFormData] = useState({ email: '', senha: '', username: '', nome: '', telefone: '' });
+    const [formCadastro, setFormCadastro] = useState({ email: '', senha: '', username: '', nome: '', telefone: '' });
     const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormCadastro({ ...formCadastro, [e.target.name]: e.target.value });
 
     }; 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const response = await axios.post(`http://localhost:3000/user`, {
-                email: formData.email,
-                senha: formData.senha,
-                username: formData.username,
-                nome: formData.nome,
-                telefone: formData.telefone || null,
+                email: formCadastro.email,
+                senha: formCadastro.senha,
+                username: formCadastro.username,
+                nome: formCadastro.nome,
+                telefone: formCadastro.telefone || null,
             });
 
             const signUp = await axios.post(`http://localhost:3000/auth/login`, {
-                email: formData.email,
-                senha: formData.senha
+                email: formCadastro.email,
+                senha: formCadastro.senha
             });
             const { token } = signUp.data;
             
@@ -73,7 +73,7 @@ export default function LoginPage() {
                         <input
                             type="text"
                             name="nome"
-                            value={formData.nome}
+                            value={formCadastro.nome}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                             required
@@ -84,7 +84,7 @@ export default function LoginPage() {
                         <input
                             type="email"
                             name="email"
-                            value={formData.email}
+                            value={formCadastro.email}
                             onChange={handleChange}
                             className= "pl-2 pb-1 w-full"
                             required
@@ -96,7 +96,7 @@ export default function LoginPage() {
                         <input
                             type="password"
                             name="senha"
-                            value={formData.senha}
+                            value={formCadastro.senha}
                             onChange={handleChange}
                             placeholder="********"
                             className="pl-2 pb-1 w-full"
@@ -108,7 +108,7 @@ export default function LoginPage() {
                         <input
                             type="text"
                             name="username"
-                            value={formData.username}
+                            value={formCadastro.username}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                             required
@@ -119,7 +119,7 @@ export default function LoginPage() {
                         <input
                             type="text"
                             name="telefone"
-                            value={formData.telefone || ""}
+                            value={formCadastro.telefone || ""}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                         />

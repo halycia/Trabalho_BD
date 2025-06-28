@@ -3,7 +3,7 @@ import {IsNotEmpty} from 'class-validator';
 export class UpdateFeedbackDto {
 
   @IsNotEmpty()
-  data: Date;
+  data: Date | string;
 
   @IsNotEmpty()
   texto: string;

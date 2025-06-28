@@ -32,10 +32,8 @@ async findFeedbacksFromUser(@Param('email',) email: string): Promise<Feedback[]>
     return this.feedbackService.findOne(id);
   }
 
-  @Patch(':id')
-  async update(
-    @Param('id',ParseIntPipe) id:number,
-    @Body() editedFeedback: UpdateFeedbackDto,
+@Patch(':id')
+  async update( @Param('id',ParseIntPipe) id:number,@Body() editedFeedback: UpdateFeedbackDto,
   ) {
     return this.feedbackService.updateFeedback(id, editedFeedback);
   }

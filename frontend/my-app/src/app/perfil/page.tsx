@@ -11,7 +11,7 @@ import HeaderLogado from "@/components/headers/logado";
 export default function Perfil() {
     const router= useRouter();
     const [userInfo, setUserInfo] = useState<User | null>(null);
-    const [formData, setFormData] = useState({
+    const [formCadastro, setformEdit] = useState({
         email: '',
         username: '',
         nome: '',
@@ -20,11 +20,11 @@ export default function Perfil() {
     });
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setformEdit({ ...formCadastro, [e.target.name]: e.target.value });
     };
 
     const handleCancel = () => {
-        setFormData({
+        setformEdit({
             email: userInfo?.email || '',
             username: userInfo?.username || '',
             nome: userInfo?.nome || '',
@@ -54,15 +54,26 @@ export default function Perfil() {
         e.preventDefault();
         try {
                 const updateUser = {
-                    email: formData.email,
-                    username: formData.username,
-                    nome: formData.nome,
-                    senha: formData.senha,
-                    telefone: formData.telefone || null
+                    email: formCadastro.email,
+                    username: formCadastro.username,
+                    nome: formCadastro.nome,
+                    senha: formCadastro.senha,
+                    telefone: formCadastro.telefone || null
                 }
                 const response = await axios.patch(`http://localhost:3000/user/${userInfo?.email}`,
                     updateUser
                 );
+                toast.success("Informações do usuário atualizadas com sucesso!", {autoClose: 2000});
+            const newToken = await axios.post(`http://localhost:3000/auth/login`, {
+                email: updateUser.email,
+                senha: updateUser.senha
+            });
+            const { token } = newToken.data;
+            localStorage.setItem('token', token);
+            setTimeout(() => {
+            window.location.reload();
+            }, 2000);
+
         } catch (error: any) {
             toast.error("Erro ao atualizar informações do usuário.");
             console.log(error);
@@ -94,7 +105,7 @@ export default function Perfil() {
 
     useEffect(() => {
         if (userInfo) {
-            setFormData({
+            setformEdit({
                 email: userInfo.email,
                 username: userInfo.username,
                 nome: userInfo.nome,
@@ -112,7 +123,8 @@ export default function Perfil() {
 
     <div className="min-h-screen bg-gray-200">
         <HeaderLogado/>
-        <div className="flex flex-col items-center justify-center pt-4"> {/* Removed min-h-screen from here */}
+        <div className="flex flex-col items-center justify-center pt-4"> 
+            <h1 className="text-2xl font-bold mb-4">Informações do perfil</h1>
             <div className="w-2/4 h-1/2 flex flex-row items-center justify-center bg-white rounded-lg shadow-lg p-10">
                 <form onSubmit={handleSubmit} >
                     <label className=" mb-2 text-sm font-medium text-gray-700">Nome</label>
@@ -120,9 +132,9 @@ export default function Perfil() {
                         <input
                             type="text"
                             name="nome"
-                            value={formData.nome}
+                            value={formCadastro.nome}
                             onChange={handleChange}
-                            className="pl-2"
+                            className="pl-2 pb-1 w-full"
                             required
                         />
                     </div>
@@ -131,8 +143,9 @@ export default function Perfil() {
                         <input
                             type="email"
                             name="email"
-                            value={formData.email}
+                            value={formCadastro.email}
                             onChange={handleChange}
+                            className="pl-2 pb-1 w-full"
                             required
                         />
 
@@ -142,7 +155,7 @@ export default function Perfil() {
                         <input
                             type="password"
                             name="senha"
-                            value={formData.senha}
+                            value={formCadastro.senha}
                             onChange={handleChange}
                             placeholder="********"
                             className="pl-2 w-full"
@@ -154,7 +167,7 @@ export default function Perfil() {
                         <input
                             type="text"
                             name="username"
-                            value={formData.username}
+                            value={formCadastro.username}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                             required
@@ -165,7 +178,7 @@ export default function Perfil() {
                         <input
                             type="text"
                             name="telefone"
-                            value={formData.telefone || ""}
+                            value={formCadastro.telefone || ""}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                         />
@@ -188,7 +201,7 @@ export default function Perfil() {
                         <button
                             onClick={ConfirmDelete}
                             type="button"
-                            className="bg-blue-500 hover:bg-red-600 text-white font-bold py-2 px-4 cursor-pointer rounded">
+                            className="bg-blue-500 hover:bg-black text-white font-bold py-2 px-4 cursor-pointer rounded">
                             Excluir
                         </button>
                     </div>

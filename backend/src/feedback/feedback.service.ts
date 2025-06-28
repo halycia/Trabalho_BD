@@ -47,7 +47,7 @@ export class FeedbackService {
                 [newFeedback.data, newFeedback.texto, newFeedback.tipo,
                 newFeedback.idsetor, newFeedback.emailusuario],
             );
-        return result.rows[0] as Feedback;
+            return { message: 'Feedback criado com sucesso' };
         } 
     }
 
@@ -71,7 +71,7 @@ export class FeedbackService {
                 [editedFeedback.data, editedFeedback.texto, editedFeedback.tipo,
                 editedFeedback.idsetor, editedFeedback.emailusuario, id],
             );
-            return result.rows[0] as Feedback;
+              return { message: 'Feedback editado com sucesso' };
         }
     }
 
@@ -80,10 +80,6 @@ export class FeedbackService {
       'DELETE FROM feedback WHERE id = $1',
       [id],
     );
-    const deletedFeedback = result.rows[0];
-    if (!deletedFeedback) {
-      return null;
-    }
-    return { deletedFeedback };
+    return { message: 'Feedback deletado com sucesso' };
     }
 }
