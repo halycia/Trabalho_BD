@@ -5,7 +5,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function Cadastro() {
     const [formCadastro, setFormCadastro] = useState({ email: '', senha: '', username: '', nome: '', telefone: '' });
     const router = useRouter();
 
@@ -64,7 +64,9 @@ export default function LoginPage() {
                 }}
             />
             <div className="w-1/2 bg-gray-100 flex items-center justify-center">
-                <div className="w-3/4 max-w-md bg-white p-10 rounded-lg shadow-lg">
+                <div className="w-3/4 max-w-md p-10 rounded-lg shadow-lg">
+                    <h1 className="text-2xl font-bold mb-6 text-center">AvaliaRU</h1>
+
                     <h2 className="text-2xl font-bold mb-6 text-center">Cadastro</h2>
 
                 <form onSubmit={handleSubmit} >
@@ -117,24 +119,26 @@ export default function LoginPage() {
                     <label className=" mb-2 text-sm font-medium text-gray-700">Telefone (opcional)</label>
                     <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
                         <input
-                            type="text"
+                            type="phone"
                             name="telefone"
                             value={formCadastro.telefone || ""}
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                         />
                     </div>
+                    <div className='flex pt-2 flex-col justify-center items-center'>
                         <button
                             type="submit"
-                            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer"
                         >
                             Cadastrar
                         </button>
+                    </div>
                     </form>
 
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
-                            <Link href="/login" className="text-blue-500 hover:text-blue-600">
+                            <Link href="/login" className="bg-gray-100 text-black px-4 py-2 rounded-md hover:bg-gray-300 cursor-pointer">
                                 Login
                             </Link>
                         </p>

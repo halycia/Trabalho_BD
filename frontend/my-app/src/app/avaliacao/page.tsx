@@ -87,11 +87,20 @@ const toggleModalAvaliacao = () => {
     };
 
     const modalEditAvaliacao = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
         <div className="h-auto text-black w-[60%] max-w-lg flex flex-col mx-auto bg-[#4a71ff] rounded-md items-center p-6">
             <h2 className="text-white text-xl font-bold mb-4">Editar Avaliação</h2>
             
             <div className="w-full mb-4">
+                <select
+                disabled
+                value={avaliacaoEdit?.refeicao}
+                className="bg-gray-200 h-[2rem] w-full pl-[0.325rem] mt-5 rounded-md cursor-not-allowed opacity-75"
+            >
+                <option>{avaliacaoEdit?.refeicao}</option>
+            </select>
+
+
                 <label className="text-white block mb-2">Nota:</label>
                 <select 
                     value={editAvaliacaoNota}
@@ -112,7 +121,8 @@ const toggleModalAvaliacao = () => {
                 <label className="text-white block mb-2">Data de Consumo:</label>
                 <input
                     type="date"
-                    value={editAvaliacaoDataConsumo?.toISOString?.()?.split('T')[0]}                    
+                    value={editAvaliacaoDataConsumo?.toISOString?.()?.split('T')[0]}      
+                    max={new Date().toISOString().split('T')[0]}              
                     onChange={(e) => setEditAvaliacaoDataConsumo(new Date(e.target.value))}
                     className="w-full p-2 rounded-md border"
                 />
@@ -171,10 +181,10 @@ const toggleModalAvaliacao = () => {
         </div>
     </div>
     );
-    if (!userInfo) return <div>Carregando...</div>;
+    if (!userInfo) return <div className="h-screen bg-gray-100"></div>;
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-100"> 
             {isModalEditAvaliacaoOpen && modalEditAvaliacao()}
             <HeaderLogado />
             <div className="container mx-auto px-4 py-8">
@@ -191,13 +201,15 @@ const toggleModalAvaliacao = () => {
                             <div className="w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
                                 <div className="flex flex-col justify-center items-center pl-3 space-y-4 mt-2">
                                         <div className='flex ml-3 items-center'>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">Data da avaliação: {new Date(avaliacao.dataavaliacao).toLocaleDateString()}</span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex"> Data de consumo: {new Date(avaliacao.dataconsumo).toLocaleDateString()}</span> 
-                                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">Nota: {avaliacao.nota}</span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{avaliacao.nomeprato}</span>
+                                            <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">Data da avaliação: {new Date(avaliacao.dataavaliacao).toLocaleDateString()}</span>
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
+                                            <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex"> Data de consumo: {new Date(avaliacao.dataconsumo).toLocaleDateString()}</span> 
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
+                                            <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">Refeição: {avaliacao.refeicao}</span>
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
+                                            <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">Nota: {avaliacao.nota}</span>
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
+                                            <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">{avaliacao.nomeprato}</span>
                                         </div>
                                     <div className='flex flex-col ml-[4.25rem]'>
                                                 <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap break-words max-w-full">{avaliacao.texto}</p>

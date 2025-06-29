@@ -132,7 +132,7 @@ export default function Perfil() {
     }, [userInfo]);
 
     if (!userInfo) {
-        return <div> Carregando </div>
+        return <div className="min-h-screen bg-gray-200">  </div>
     }
 return(
     <div className="min-h-screen bg-gray-200">
@@ -190,7 +190,7 @@ return(
                     <label className=" mb-2 text-sm font-medium text-gray-700">Telefone (opcional)</label>
                     <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
                         <input
-                            type="text"
+                            type="phone"
                             name="telefone"
                             value={formEdit.telefone || ""}
                             onChange={handleChange}

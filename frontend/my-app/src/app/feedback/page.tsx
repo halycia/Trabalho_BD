@@ -134,7 +134,7 @@ export default function UserFeedback() {
     };
 
     const modalEditFeedback = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
         <div className="h-screen text-black w-[60%] max-h-[60%] flex flex-col mx-auto bg-[#4a71ff] rounded-md items-center">
             
             <select

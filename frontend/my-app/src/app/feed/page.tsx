@@ -65,7 +65,7 @@ export default function FeedPage() {
     };
 
     const modalAvaliacao = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
         <div className="h-auto text-black w-[60%] max-w-lg flex flex-col mx-auto bg-[#4a71ff] rounded-md items-center p-6">
             <h2 className="text-white text-xl font-bold mb-4">Nova Avaliação</h2>
             
@@ -134,12 +134,12 @@ export default function FeedPage() {
                 <div className="flex justify-end items-center w-full mt-6 space-x-4 px-4 pb-2">
                     <button
                         onClick={() => { resetAvaliacaoModalFields(); toggleModalAvaliacao(); }}
-                        className="bg-white text-[#4a71ff] border border-[#4a71ff] rounded-lg px-4 py-2"
+                        className="bg-white text-black border border-[#4a71ff] rounded-lg px-4 py-2 cursor-pointer"
                     >
                         Cancelar
                     </button>
                     <button
-                        className="bg-[#A4FED3] text-[#2B895C] rounded-lg px-4 py-2 hover:scale-105 transition-all"
+                        className="bg-[#A4FED3] text-[#2B895C] rounded-lg px-4 py-2 hover:scale-105 transition-all cursor-pointer"
                         onClick={() => {
                             if (!dataConsumoAvaliacao || dataConsumoAvaliacao.toISOString().split('T')[0] > new Date().toISOString().split('T')[0]) {
                                 toast.error("Data de consumo inválida!");
@@ -242,9 +242,8 @@ export default function FeedPage() {
     };
 
     const modalFeedback = () => (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-            <div className="h-screen text-black w-[60%] max-h-[60%] flex flex-col mx-auto bg-[#4a71ff] rounded-md items-center">
-                
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+            <div className="h-auto text-black w-[60%] flex flex-col mx-auto bg-[#4a71ff] rounded-md items-center">
                 <select
                     value={campusSelected} 
                     className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
@@ -329,12 +328,12 @@ export default function FeedPage() {
                     <div className="flex justify-end items-center w-full mt-6 space-x-4 px-4 pb-2">
                         <button
                             onClick={() => { resetFeedbackModalFields(); toggleFeedbackModal(); }}
-                            className="bg-white text-[#4a71ff] border border-[#4a71ff] rounded-lg px-4 py-2 "
+                            className="bg-white text-black border border-[#4a71ff] rounded-lg px-4 py-2 cursor-pointer "
                         >
                             Cancelar
                         </button>
                         <button
-                            className="bg-[#A4FED3] text-[#2B895C] rounded-lg px-4 py-2 hover:scale-105 transition-all"
+                            className="bg-[#A4FED3] text-[#2B895C] rounded-lg px-4 py-2 hover:scale-105 transition-all cursor-pointer"
                             onClick={() => {
                                 if (!textoFeedback.trim() || campusSelected === "-1" || setorSelected === "-1" || tipo === "-1") {
                                     toast.error("Preencha todos os campos!");
@@ -380,7 +379,7 @@ export default function FeedPage() {
                 <HeaderLogado />
                 {isFeedbackModalOpen && modalFeedback()}
                 {isModalAvaliacaoOpen && modalAvaliacao()}
-                <div className='flex items-center justify-center'>
+                <div className='flex items-center justify-center mt-2'>
                 <button
                     onClick={toggleFeedbackModal}
                     className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'>
@@ -389,7 +388,7 @@ export default function FeedPage() {
                 <button
                     onClick={toggleModalAvaliacao}
                     className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4 cursor-pointer'>
-                    Novo avaliação
+                    Nova avaliação
                 </button>
                 </div>
             </div>
