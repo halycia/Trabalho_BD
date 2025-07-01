@@ -1,8 +1,7 @@
-export class Comentario {
+export interface Comentario {
     id: number;
     texto: string;
-    data: Date;
-    qntCurtidas: number;
+    data: Date | string;
     idAvaliacao: number;
     emailUsuario: string;
 }

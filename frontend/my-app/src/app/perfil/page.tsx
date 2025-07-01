@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from "@/utils/types";
+import { User } from "@/types";
 import { use, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";

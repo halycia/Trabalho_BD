@@ -16,7 +16,7 @@ export class ComentarioService {
   userService = new UserService(this.db);
   avaliacaoService = new AvaliacaoService(this.db);
 
-  async create(createComentarioDto: CreateComentarioDto) {
+  async createComentario(createComentarioDto: CreateComentarioDto) {
     const userExists = await this.userService.findUserByEmail(
       createComentarioDto.emailUsuario,
     );
@@ -31,7 +31,7 @@ export class ComentarioService {
     }
 
     const result = await this.db.query(
-      'INSERT INTO comentario (texto, data, idAvaliacao, emailUsuario) VALUES ($1, $2, $3, $4) RETURNING *',
+      'INSERT INTO comentario (texto, data, idAvaliacao, emailUsuario) VALUES ($1, $2, $3, $4)',
       [
         createComentarioDto.texto,
         createComentarioDto.data,
@@ -39,7 +39,7 @@ export class ComentarioService {
         createComentarioDto.emailUsuario,
       ],
     );
-    return result.rows[0] as Comentario;
+    return { message: "Comentário criado com sucesso!" };
   }
 
   async findAll() {
@@ -58,7 +58,7 @@ export class ComentarioService {
     return result.rows[0] as Comentario;
   }
 
-  async update(id: number, updateComentarioDto: UpdateComentarioDto) {
+  async updateComentario(id: number, updateComentarioDto: UpdateComentarioDto) {
     const comentario = await this.findOne(id);
 
     const updatedComentario = {
@@ -80,27 +80,34 @@ export class ComentarioService {
     }
 
     const result = await this.db.query(
-      'UPDATE comentario SET texto = $1, data = $2, qntCurtidas = $3, idAvaliacao = $4, emailUsuario = $5 WHERE id = $6 RETURNING *',
+      'UPDATE comentario SET texto = $1, data = $2, qntCurtidas = $3, idAvaliacao = $4, emailUsuario = $5 WHERE id = $6',
       [
         updatedComentario.texto,
         updatedComentario.data,
-        updatedComentario.qntCurtidas,
         updatedComentario.idAvaliacao,
         updatedComentario.emailUsuario,
         id,
       ],
     );
-    return result.rows[0] as Comentario;
+    return {message: "Comentário atualizado com sucesso!"};
   }
 
-  async remove(id: number) {
+  async deleteComentario(id: number) {
     const result = await this.db.query(
-      'DELETE FROM comentario WHERE id = $1 RETURNING *',
+      'DELETE FROM comentario WHERE id = $1',
       [id],
     );
     if (result.rows.length === 0) {
       throw new NotFoundException('Comentário não encontrado');
     }
     return result.rows[0];
+  }
+
+  async  findComentariosFromAvaliacao( idAvaliacao: number,): Promise<Comentario[]> {
+    const result = await this.db.query(
+      'SELECT * FROM comentario WHERE idavaliacao = $1',
+      [idAvaliacao],
+    );
+    return result.rows as Comentario[];
   }
 }

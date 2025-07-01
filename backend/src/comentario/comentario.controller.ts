@@ -11,14 +11,15 @@ import {
 import { ComentarioService } from './comentario.service';
 import { CreateComentarioDto } from './dto/CreateComentarioDto';
 import { UpdateComentarioDto } from './dto/UpdateComentarioDto';
+import { Comentario } from './comentario.entity';
 
 @Controller('comentario')
 export class ComentarioController {
   constructor(private readonly comentarioService: ComentarioService) {}
 
   @Post()
-  create(@Body() createComentarioDto: CreateComentarioDto) {
-    return this.comentarioService.create(createComentarioDto);
+  createComentario(@Body() createComentarioDto: CreateComentarioDto) {
+    return this.comentarioService.createComentario(createComentarioDto);
   }
 
   @Get()
@@ -27,8 +28,15 @@ export class ComentarioController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number):Promise<Comentario> {
     return this.comentarioService.findOne(id);
+  }
+
+  @Get ('avaliacao/:idAvaliacao')
+  findComentariosFromAvaliacao(
+    @Param('idAvaliacao', ParseIntPipe) idAvaliacao: number,
+  ): Promise<Comentario[]> {
+    return this.comentarioService.  findComentariosFromAvaliacao(idAvaliacao);
   }
 
   @Patch(':id')
@@ -36,11 +44,11 @@ export class ComentarioController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateComentarioDto: UpdateComentarioDto,
   ) {
-    return this.comentarioService.update(id, updateComentarioDto);
+    return this.comentarioService.updateComentario(id, updateComentarioDto);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.comentarioService.remove(id);
+    return this.comentarioService.deleteComentario(id);
   }
 }
