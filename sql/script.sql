@@ -37,7 +37,7 @@ CREATE TABLE Restaurante
 (
     id SERIAL PRIMARY KEY, 
     numRestaurante INT NOT NULL,
-    diasFunc VARCHAR(100),
+    status VARCHAR(100),
     capacidade INT,
     nomeCampus VARCHAR(30) NOT NULL REFERENCES Campus(nome),
     UNIQUE (numRestaurante, nomeCampus)

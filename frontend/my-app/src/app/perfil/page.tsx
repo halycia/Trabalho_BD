@@ -153,7 +153,7 @@ return(
                         />
                     </div>
                     <label className=" mb-2 text-sm font-medium text-gray-700">Email</label>
-                    <div className="mb-4">
+                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
                         <input
                             type="email"
                             name="email"
@@ -172,7 +172,7 @@ return(
                             value={formEdit.senha}
                             onChange={handleChange}
                             placeholder="********"
-                            className="pl-2 w-full"
+                            className="pl-2 pb-1 w-full"
                             required
                         />
                     </div>
