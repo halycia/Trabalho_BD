@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PratoService } from './prato.service';
 import { Prato } from './prato.entity'; 
+import{infoPrato} from './infoPrato.entity'
 
 @Controller('prato')
 export class PratoController {
@@ -20,4 +21,9 @@ async findAll() : Promise<Prato[]> {
     return this.pratoService.findOnePrato(nome);
   }
 
+
+@Get('info')
+  async findInfoPrato(): Promise<infoPrato[]>{
+    return this.pratoService.findInfoPrato();
+  }
 }
