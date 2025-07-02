@@ -38,9 +38,9 @@ export class AvaliacaoService {
     async createAvaliacao(newAvaliacao: CreateAvaliacaoDto) {
         const result = await this.db.query(
             `INSERT INTO avaliacao (nota, dataavaliacao, dataconsumo, texto, emailusuario, nomeprato, refeicao)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING*`,
             [newAvaliacao.nota, newAvaliacao.dataavaliacao, newAvaliacao.dataconsumo, newAvaliacao.texto, newAvaliacao.emailusuario, newAvaliacao.nomeprato, newAvaliacao.refeicao]);
-        return result.rows[0] as Avaliacao;
+        return result.rows[0];
     }
 
     async updateAvaliacao(id: number, avaliacao: UpdateAvaliacaoDto) {

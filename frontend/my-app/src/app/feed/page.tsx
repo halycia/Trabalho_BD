@@ -49,12 +49,17 @@ export default function FeedPage() {
 
     const creatingAvaliacao = async (avaliacao: Partial<Avaliacao>) => {
         try {
-            await axios.post("http://localhost:3000/avaliacao", avaliacao);
+            const tryCreateAval = await axios.post("http://localhost:3000/avaliacao", avaliacao);
+            if (tryCreateAval.data==="Este prato já foi avaliado."){
+                toast.error("Você já avaliou este prato neste dia!");
+            }
+            else{
             toast.success("Avaliação criada com sucesso!", { autoClose: 2000 });
             resetAvaliacaoModalFields();
             setTimeout(() => {
                 toggleModalAvaliacao();
             }, 500);
+        }
         } catch {
             toast.error("Erro ao criar avaliação. Por favor, tente novamente.");
         }
@@ -372,7 +377,21 @@ export default function FeedPage() {
 
     if (!isAuth) {
         return (
-            <HeaderDeslogado />
+            <div className="min-h-screen bg-gray-100">
+                <HeaderDeslogado />
+                <div className='flex items-center justify-center mt-2'>
+                    <button
+                        onClick={() => router.push('/login')}
+                        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'>
+                        Novo feedback
+                    </button>
+                    <button
+                        onClick={() => router.push('/login')}
+                        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4 cursor-pointer'>
+                        Nova avaliação
+                    </button>
+                </div>
+            </div>
         )
     }
     else {

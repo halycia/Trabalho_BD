@@ -2,7 +2,8 @@ CREATE TABLE Prato
 (
     nome VARCHAR(90) PRIMARY KEY,
     kcalPrato FLOAT,
-    icone BYTEA
+    icone BYTEA,
+    categoria VARCHAR (25)
 );
 
 
@@ -51,7 +52,7 @@ CREATE TABLE Setor
     id SERIAL PRIMARY KEY,
     nome VARCHAR(50),
     telefone VARCHAR(25) UNIQUE,
-    nomeCampus VARCHAR(30) NOT NULL REFERENCES Campus(nome)ON DELETE CASCADE,
+    nomeCampus VARCHAR(30) NOT NULL REFERENCES Campus(nome) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE (nome, nomeCampus)
 );
 
