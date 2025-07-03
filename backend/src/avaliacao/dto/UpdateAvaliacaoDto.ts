@@ -14,8 +14,8 @@ export class UpdateAvaliacaoDto {
   dataconsumo: Date | string;
 
   @IsNotEmpty()
-  emailusuario: string;
+  idusuario: number;
   
   @IsNotEmpty()
-  nomeprato: string;
+  idprato: number;
 }

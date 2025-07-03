@@ -49,17 +49,12 @@ export default function FeedPage() {
 
     const creatingAvaliacao = async (avaliacao: Partial<Avaliacao>) => {
         try {
-            const tryCreateAval = await axios.post("http://localhost:3000/avaliacao", avaliacao);
-            if (tryCreateAval.data==="Este prato já foi avaliado."){
-                toast.error("Você já avaliou este prato neste dia!");
-            }
-            else{
+            await axios.post("http://localhost:3000/avaliacao", avaliacao);
             toast.success("Avaliação criada com sucesso!", { autoClose: 2000 });
             resetAvaliacaoModalFields();
             setTimeout(() => {
                 toggleModalAvaliacao();
             }, 500);
-        }
         } catch {
             toast.error("Erro ao criar avaliação. Por favor, tente novamente.");
         }
@@ -85,7 +80,7 @@ export default function FeedPage() {
                 >
                     <option value="-1" disabled>Selecione o prato</option>
                     {pratos.map((prato) => (
-                        <option key={prato.nome} value={prato.nome}>
+                        <option key={prato.id} value={prato.nome}>
                             {prato.nome}
                         </option>
                     ))}
@@ -160,8 +155,8 @@ export default function FeedPage() {
                                         nota: notaAvaliacao,
                                         dataavaliacao: dataAvaliacao,
                                         dataconsumo: dataConsumoAvaliacao.toLocaleDateString(),
-                                        nomeprato: pratoAvaliacao.nome,
-                                        emailusuario: userInfo?.email,
+                                        idPrato: pratoAvaliacao.id,
+                                        idUsuario: userInfo?.id,
                                         refeicao: refeicaoAvaliacao,
                                     });
                                 }
@@ -350,7 +345,7 @@ export default function FeedPage() {
                                             tipo: tipo,
                                             data: dataFeedback,
                                             idsetor: parseInt(setorSelected, 10),
-                                            emailusuario: userInfo?.email,
+                                            idUsuario: userInfo?.id
                                         })
                                     }
                                     catch (error) {

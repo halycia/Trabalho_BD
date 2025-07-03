@@ -7,10 +7,10 @@ import { Campus } from './campus.entity';
 export class CampusService {
   constructor(private db: DatabaseService) {}
 
-  async findOneCampus(nome: string): Promise<Campus | null> {
+  async findOneCampus(id:number): Promise<Campus | null> {
     const result = await this.db.query(
-      'SELECT * FROM campus WHERE nome = $1',
-      [nome],
+      'SELECT * FROM campus WHERE id = $1',
+      [id],
     );
     return result.rows[0] as Campus ?? null;
   }

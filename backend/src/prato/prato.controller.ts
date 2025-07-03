@@ -16,9 +16,9 @@ async findAll() : Promise<Prato[]> {
     return await this.pratoService.findAllPratos();
 }
 
-@Get('nome/:nome')
-  async findOnePrato(@Param('nome') nome: string): Promise<Prato | null> {
-    return this.pratoService.findOnePrato(nome);
+@Get(':id')
+  async findOnePrato(@Param('id') id:number): Promise<Prato | null> {
+    return this.pratoService.findOnePrato(id);
   }
 
 

@@ -15,31 +15,36 @@ import { FeedbackService } from './feedback.service';
 
 @Controller('feedback')
 export class FeedbackController {
-  constructor(private readonly feedbackService: FeedbackService) {}
+  constructor(private readonly feedbackService: FeedbackService) { }
 
-@Post()
+  @Post()
   async create(@Body() newFeedback: CreateFeedbackDto) {
     return this.feedbackService.createFeedback(newFeedback);
   }
 
-@Get('user/:email')
-async findFeedbacksFromUser(@Param('email',) email: string): Promise<Feedback[]> {
-    return await this.feedbackService.findAllFeedbcksFromUser(email);
-}
+  @Get()
+  async findAllFeedbacks(): Promise<Feedback[]> {
+    return this.feedbackService.findAllFeedbacks();
+  }
 
-@Get(':id')
-  async findOne(@Param('id',ParseIntPipe) id: number): Promise<Feedback | null> {
+  @Get('user/:idusuario')
+  async findFeedbacksFromUser(@Param('idusuario', ParseIntPipe) idusuario: number): Promise<Feedback[]> {
+    return await this.feedbackService.findAllFeedbacksFromUser(idusuario);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Feedback | null> {
     return this.feedbackService.findOne(id);
   }
 
-@Patch(':id')
-  async update( @Param('id',ParseIntPipe) id:number,@Body() editedFeedback: UpdateFeedbackDto,
+  @Patch(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() editedFeedback: UpdateFeedbackDto,
   ) {
     return this.feedbackService.updateFeedback(id, editedFeedback);
   }
 
   @Delete(':id')
-  async delete(@Param('id',ParseIntPipe) id:number) {
+  async delete(@Param('id', ParseIntPipe) id: number) {
     return this.feedbackService.deleteFeedback(id);
   }
 }

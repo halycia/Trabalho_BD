@@ -11,5 +11,5 @@ export class CreateComentarioDto {
   idAvaliacao: number;
 
   @IsNotEmpty()
-  emailUsuario: string;
+  idUsuario: number;
 }

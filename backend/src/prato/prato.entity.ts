@@ -1,5 +1,6 @@
 export interface Prato {
+    id: number,
     nome: string,
-    kcalPrato?: number,
+    categoria?: string | null,
     icone?: Buffer | null;
 }

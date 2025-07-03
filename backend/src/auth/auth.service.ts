@@ -11,14 +11,15 @@ export class AuthService {
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
     ) { }
-    async login(infoLogin: InfoLogin): Promise<{token:string}> {
+    async login(infoLogin: InfoLogin): Promise<{ token: string }> {
         const user = await this.userService.findUserByEmail(infoLogin.email);
         if (!user || user.senha !== infoLogin.senha) {
             throw new UnauthorizedException('Credenciais inválidas');
         }
         else {
             const payload = {
-                sub: user.email
+                sub: user.id,
+                email: user.email,
             };
             const jwtSecret = process.env.JWT_SECRET;
             const jwtToken = this.jwtService.sign(payload, {
@@ -28,5 +29,5 @@ export class AuthService {
 
             return { token: jwtToken };
         }
-    } 
+    }
 }

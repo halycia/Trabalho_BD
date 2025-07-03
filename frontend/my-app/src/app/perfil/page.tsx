@@ -29,7 +29,6 @@ export default function Perfil() {
             username: userInfo?.username || '',
             nome: userInfo?.nome || '',
             senha: userInfo?.senha || '',
-            telefone: userInfo?.telefone || ''
         });
     }
 
@@ -105,10 +104,9 @@ export default function Perfil() {
                 console.log("Token:", token);
 
                 if (token) {
-                    const decoded: { sub: string } = jwtDecode(token);
-                    const email = decoded.sub;
-                    console.log("Email decodificado:", email);
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/email/${email}`)).data;
+                    const decoded: { sub: number } = jwtDecode(token);
+                    const id = decoded.sub;
+                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
                     setUserInfo(userResponse);
                 }
             } catch (error) {
@@ -126,7 +124,6 @@ export default function Perfil() {
                 username: userInfo.username,
                 nome: userInfo.nome,
                 senha: userInfo.senha,
-                telefone: userInfo.telefone || ''
             });
         }
     }, [userInfo]);
@@ -187,17 +184,6 @@ return(
                             required
                         />
                     </div>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Telefone (opcional)</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="phone"
-                            name="telefone"
-                            value={formEdit.telefone || ""}
-                            onChange={handleChange}
-                            className="pl-2 pb-1 w-full"
-                        />
-                    </div>
-
 
                     <div className="flex flex-row space-x-2">
                         <button

@@ -27,9 +27,9 @@ export class AvaliacaoController {
       return await this.avaliacaoService.findAllAvaliacao();
     }
 
-    @Get ('user/:email')
-        async findAvalsFromUser(@Param('email') email: string): Promise<Avaliacao[]> {
-      return this.avaliacaoService.findAvalsFromUser(email);
+    @Get ('user/:id')
+        async findAvalsFromUser(@Param('id', ParseIntPipe) idUsuario: number): Promise<Avaliacao[]> {
+      return this.avaliacaoService.findAvalsFromUser(idUsuario);
     }
 
 

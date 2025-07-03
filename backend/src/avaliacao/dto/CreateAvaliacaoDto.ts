@@ -14,11 +14,11 @@ export class CreateAvaliacaoDto {
   dataconsumo: Date |string;
 
   @IsNotEmpty()
-  emailusuario: string;
+  idusuario: number;
 
   @IsNotEmpty()
   refeicao: string;
 
   @IsNotEmpty()
-  nomeprato: string;
+  idprato: number;
 }

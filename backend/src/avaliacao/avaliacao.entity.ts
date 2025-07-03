@@ -4,6 +4,6 @@ export interface Avaliacao{
     texto: string;
     dataavaliacao: Date | string;
     dataconsumo: Date | string;
-    emailusuario: string;
-    nomeprato: string;
+    idUsuario: number;
+    idPrato: number;
 }

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import Link from 'next/link';
 
 export default function Cadastro() {
-    const [formCadastro, setFormCadastro] = useState({ email: '', senha: '', username: '', nome: '', telefone: '' });
+    const [formCadastro, setFormCadastro] = useState({ email: '', senha: '', username: '', nome: ''});
     const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,7 +21,6 @@ export default function Cadastro() {
                 senha: formCadastro.senha,
                 username: formCadastro.username,
                 nome: formCadastro.nome,
-                telefone: formCadastro.telefone || null,
             });
 
             const signUp = await axios.post(`http://localhost:3000/auth/login`, {
@@ -30,7 +29,8 @@ export default function Cadastro() {
             });
             const { token } = signUp.data;
             
-            localStorage.setItem('token', token); toast.success("Cadastro realizado com sucesso!", {
+            localStorage.setItem('token', token);
+            toast.success("Cadastro realizado com sucesso!", {
                 autoClose: 2000,
             });
 
@@ -114,16 +114,6 @@ export default function Cadastro() {
                             onChange={handleChange}
                             className="pl-2 pb-1 w-full"
                             required
-                        />
-                    </div>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Telefone (opcional)</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="phone"
-                            name="telefone"
-                            value={formCadastro.telefone || ""}
-                            onChange={handleChange}
-                            className="pl-2 pb-1 w-full"
                         />
                     </div>
                     <div className='flex pt-2 flex-col justify-center items-center'>

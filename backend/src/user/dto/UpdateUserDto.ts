@@ -2,7 +2,7 @@ import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsEmail({}, { message: 'Invalid email format' })
+  @IsEmail()
   email?: string;
 
   @IsOptional()
@@ -17,6 +17,4 @@ export class UpdateUserDto {
   @IsString()
   senha?: string;
 
-  @IsOptional()
-  telefone?: string;
 }

@@ -8,10 +8,10 @@ import { infoPrato } from './infoPrato.entity';
 export class PratoService {
   constructor(private db: DatabaseService) {}
 
-  async findOnePrato(nome: string): Promise<Prato | null> {
+  async findOnePrato(id:number): Promise<Prato | null> {
     const result = await this.db.query(
       'SELECT * FROM prato WHERE id = $1',
-      [nome],
+      [id],
     );
     return result.rows[0] as Prato ?? null;
   }

@@ -3,5 +3,5 @@ export interface Comentario {
     texto: string;
     data: Date | string;
     idAvaliacao: number;
-    emailUsuario: string;
+    idUsuario: number;
 }

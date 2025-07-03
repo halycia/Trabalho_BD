@@ -22,17 +22,21 @@ export class FeedbackService {
     );
     return result.rows[0] as Feedback ?? null;
   }
-
-    async findAllFeedbcksFromUser(email: string): Promise<Feedback[]> {
+  async findAllFeedbacks(): Promise<Feedback[]> {
+    const result = await this.db.query('SELECT * FROM feedback');
+    return result.rows as Feedback[];
+  }
+  
+    async findAllFeedbacksFromUser(id: number): Promise<Feedback[]> {
         const result = await this.db.query(
-            'SELECT * FROM feedback WHERE emailUsuario = $1',
-            [email],
+            'SELECT * FROM feedback WHERE idUsuario = $1',
+            [id],
         );
         return result.rows as Feedback[];
     }
 
     async createFeedback(newFeedback: CreateFeedbackDto) {
-        const userExists = await this.userService.findUserByEmail(newFeedback.emailusuario);
+        const userExists = await this.userService.findUserById(newFeedback.idusuario);
         const setorExists = await this.setorService.findOneSetor(newFeedback.idsetor);
         if (!userExists) {
         throw new ConflictException('Não existe usuário com esse email');
@@ -42,10 +46,10 @@ export class FeedbackService {
         }
         else{
             const result = await this.db.query(
-                `INSERT INTO feedback (data, texto, tipo, idSetor, emailUsuario)
+                `INSERT INTO feedback (data, texto, tipo, idSetor, idUsuario)
                 VALUES ($1, $2, $3, $4, $5)`,
                 [newFeedback.data, newFeedback.texto, newFeedback.tipo,
-                newFeedback.idsetor, newFeedback.emailusuario],
+                newFeedback.idsetor, newFeedback.idusuario],
             );
             return { message: 'Feedback criado com sucesso' };
         } 
@@ -56,7 +60,7 @@ export class FeedbackService {
         if (!feedbackExists) {
             throw new NotFoundException('Feedback não encontrado');
         }
-        const userExists = await this.userService.findUserByEmail(editedFeedback.emailusuario);
+        const userExists = await this.userService.findUserById(editedFeedback.idusuario);
         const setorExists = await this.setorService.findOneSetor(editedFeedback.idsetor);
         if (!userExists) {
             throw new ConflictException('Não existe usuário com esse email');
@@ -66,10 +70,10 @@ export class FeedbackService {
         }
         else{
             const result = await this.db.query(
-                `UPDATE feedback SET data = $1, texto = $2, tipo = $3, idSetor = $4, emailUsuario = $5
+                `UPDATE feedback SET data = $1, texto = $2, tipo = $3, idSetor = $4, idUsuario = $5
                 WHERE id = $6`,
                 [editedFeedback.data, editedFeedback.texto, editedFeedback.tipo,
-                editedFeedback.idsetor, editedFeedback.emailusuario, id],
+                editedFeedback.idsetor, editedFeedback.idusuario, id],
             );
               return { message: 'Feedback editado com sucesso' };
         }

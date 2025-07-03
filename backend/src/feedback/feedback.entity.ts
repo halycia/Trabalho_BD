@@ -4,5 +4,5 @@ export interface Feedback {
     texto: string,
     tipo: string,
     idsetor: number,
-    emailusuario: string;
+    idUsuario: number;
 }

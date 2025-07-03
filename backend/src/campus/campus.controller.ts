@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CampusService } from './campus.service';
 import { Campus } from './campus.entity'; 
@@ -15,9 +16,9 @@ async findAll() : Promise<Campus[]> {
     return await this.campusService.findAllCampus();
 }
 
-@Get('nome/:nome')
-  async findOneCampus(@Param('nome') nome: string): Promise<Campus | null> {
-    return this.campusService.findOneCampus(nome);
+@Get(':id')
+  async findOneCampus(@Param('id',ParseIntPipe) id: number): Promise<Campus | null> {
+    return this.campusService.findOneCampus(id);
   }
 
 }

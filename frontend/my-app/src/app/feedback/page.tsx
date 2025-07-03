@@ -44,9 +44,9 @@ export default function UserFeedback() {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const decoded: { sub: string } = jwtDecode(token);
-                    const email = decoded.sub;
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/email/${email}`)).data;
+                    const decoded: { sub: number } = jwtDecode(token);
+                    const id = decoded.sub;
+                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
                     setUserInfo(userResponse);
                 }
             } catch (error) {
@@ -61,7 +61,7 @@ export default function UserFeedback() {
         const findFeedbacks = async () => {
             try {
                 if (userInfo) {
-                    const response = await axios.get(`http://localhost:3000/feedback/user/${userInfo.email}`);
+                    const response = await axios.get(`http://localhost:3000/feedback/user/${userInfo.id}`);
                     setFeedbacks(response.data);
                 }
             } catch (error) {
@@ -102,8 +102,10 @@ export default function UserFeedback() {
     const deleteFeedback = async (id: number) => {
         try {
             await axios.delete(`http://localhost:3000/feedback/${id}`);
-            setFeedbacks(feedbacks.filter(feedback => feedback.id !== id));
             toast.success("Feedback deletado com sucesso!");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } catch (error) {
             toast.error("Erro ao deletar feedback");
         }
@@ -191,7 +193,7 @@ export default function UserFeedback() {
                                         texto: feedbackEscolhidoTexto,
                                         tipo: editFeedbackTipo,
                                         idsetor: feedbackEscolhido?.idsetor,
-                                        emailusuario: userInfo?.email,
+                                        idUsuario: userInfo?.id,
                                         data: new Date().toISOString(),
                                     };
                                     editingFeedback(editedFeedback, feedbackEscolhido?.id ?? 0);

@@ -17,8 +17,8 @@ export class ComentarioService {
   avaliacaoService = new AvaliacaoService(this.db);
 
   async createComentario(createComentarioDto: CreateComentarioDto) {
-    const userExists = await this.userService.findUserByEmail(
-      createComentarioDto.emailUsuario,
+    const userExists = await this.userService.findUserById(
+      createComentarioDto.idUsuario,
     );
     if (!userExists) {
       throw new ConflictException('Não existe usuário com esse email');
@@ -31,12 +31,12 @@ export class ComentarioService {
     }
 
     const result = await this.db.query(
-      'INSERT INTO comentario (texto, data, idAvaliacao, emailUsuario) VALUES ($1, $2, $3, $4)',
+      'INSERT INTO comentario (texto, data, idAvaliacao, idUsuario) VALUES ($1, $2, $3, $4)',
       [
         createComentarioDto.texto,
         createComentarioDto.data,
         createComentarioDto.idAvaliacao,
-        createComentarioDto.emailUsuario,
+        createComentarioDto.idUsuario,
       ],
     );
     return { message: "Comentário criado com sucesso!" };
@@ -66,8 +66,8 @@ export class ComentarioService {
       ...updateComentarioDto,
     };
 
-    const userExists = await this.userService.findUserByEmail(
-      updatedComentario.emailUsuario,
+    const userExists = await this.userService.findUserById(
+      updatedComentario.idUsuario,
     );
     if (!userExists) {
       throw new ConflictException('Não existe usuário com esse email');
@@ -80,12 +80,12 @@ export class ComentarioService {
     }
 
     const result = await this.db.query(
-      'UPDATE comentario SET texto = $1, data = $2, qntCurtidas = $3, idAvaliacao = $4, emailUsuario = $5 WHERE id = $6',
+      'UPDATE comentario SET texto = $1, data = $2, qntCurtidas = $3, idAvaliacao = $4, idUsuario = $5 WHERE id = $6',
       [
         updatedComentario.texto,
         updatedComentario.data,
         updatedComentario.idAvaliacao,
-        updatedComentario.emailUsuario,
+        updatedComentario.idUsuario,
         id,
       ],
     );

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -36,17 +37,21 @@ async findAll(): Promise<User[]> {
   async findByUsername(@Param('username') username: string): Promise<User | null> {
     return this.userService.findUserByUsername(username);
   }
+@Get (':id')
+async findUserById (@Param('id', ParseIntPipe) id:number) : Promise <User |null> {
+  return this.userService.findUserById(id);
+}
 
-  @Patch(':email')
+  @Patch(':id')
   async update(
-    @Param('email') email:string,
+    @Param('id',ParseIntPipe) id:number,
     @Body() dto: UpdateUserDto,
   ) {
-    return this.userService.updateUser(email, dto);
+    return this.userService.updateUser(id, dto);
   }
 
-  @Delete(':email')
-  async delete(@Param('email') email:string) {
-    return this.userService.deleteUser(email);
+  @Delete(':id')
+  async delete(@Param('id',ParseIntPipe) id:number) {
+    return this.userService.deleteUser(id);
   }
 }

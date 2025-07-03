@@ -27,19 +27,19 @@ export class AvaliacaoService {
         return result.rows as Avaliacao[];
     }
 
-    async findAvalsFromUser(email: string): Promise<Avaliacao[]> {
+    async findAvalsFromUser(idUsuario: number): Promise<Avaliacao[]> {
         const result = await this.db.query(
-            'SELECT * FROM avaliacao WHERE emailusuario = $1',
-            [email],
+            'SELECT * FROM avaliacao WHERE idUsuario = $1',
+            [idUsuario],
         );
         return result.rows as Avaliacao[];
     }
 
     async createAvaliacao(newAvaliacao: CreateAvaliacaoDto) {
         const result = await this.db.query(
-            `INSERT INTO avaliacao (nota, dataavaliacao, dataconsumo, texto, emailusuario, nomeprato, refeicao)
-        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING*`,
-            [newAvaliacao.nota, newAvaliacao.dataavaliacao, newAvaliacao.dataconsumo, newAvaliacao.texto, newAvaliacao.emailusuario, newAvaliacao.nomeprato, newAvaliacao.refeicao]);
+            `INSERT INTO avaliacao (nota, dataavaliacao, dataconsumo, texto, idUsuario, idPrato, refeicao)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [newAvaliacao.nota, newAvaliacao.dataavaliacao, newAvaliacao.dataconsumo, newAvaliacao.texto, newAvaliacao.idusuario, newAvaliacao.idprato, newAvaliacao.refeicao]);
         return result.rows[0];
     }
 
@@ -47,7 +47,7 @@ export class AvaliacaoService {
         try {
             const updateAvaliacao = await this.findAvaliacaoById(id);
             const result = await this.db.query(
-                'UPDATE avaliacao SET nota = $1, texto = $2, dataconsumo = $3, dataavaliacao = $4 WHERE id = $5 RETURNING *', [
+                'UPDATE avaliacao SET nota = $1, texto = $2, dataconsumo = $3, dataavaliacao = $4 WHERE id = $5', [
                 avaliacao.nota ?? updateAvaliacao.nota,
                 avaliacao.texto ?? updateAvaliacao.texto,
                 avaliacao.dataconsumo ?? updateAvaliacao.dataconsumo,

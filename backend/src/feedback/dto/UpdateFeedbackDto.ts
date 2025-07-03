@@ -15,5 +15,5 @@ export class UpdateFeedbackDto {
   idsetor: number;
 
   @IsNotEmpty()
-  emailusuario: string;
+  idusuario: number;
 }

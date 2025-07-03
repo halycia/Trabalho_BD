@@ -18,7 +18,7 @@ export default function AvaliacaoPage() {
     const [editAvaliacaoNota, setEditAvaliacaoNota] = useState<number>(-1);
     const [editAvaliacaoDataConsumo, setEditAvaliacaoDataConsumo] = useState<Date | null>(null);
     const [isModalEditAvaliacaoOpen, setIsModalEditAvaliacaoOpen] = useState(false);
-
+    const [pratosAvaliacoes, setPratoAvaliacoes] = useState <Re
     const editingAvaliacao = async (avaliacaoEdit: Partial<Avaliacao>, id: number) => {
         try {
             await axios.patch(`http://localhost:3000/avaliacao/${id}`, avaliacaoEdit);
@@ -42,7 +42,9 @@ export default function AvaliacaoPage() {
         try {
             await axios.delete(`http://localhost:3000/avaliacao/${id}`);
             toast.success("Avaliação excluída com sucesso!", { autoClose: 2000 });
-            setAvaliacoes(avaliacoes.filter(avaliacao => avaliacao.id !== id));
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
         } catch (error: any) {
             toast.error("Erro ao excluir avaliação.");
         }
@@ -156,10 +158,10 @@ export default function AvaliacaoPage() {
                                     const editedAvaliacao: Partial<Avaliacao> = {
                                         texto: editAvaliacaoTexto,
                                         nota: editAvaliacaoNota,
-                                        emailusuario: userInfo?.email,
+                                        idUsuario: userInfo?.id,
                                         dataconsumo: editAvaliacaoDataConsumo.toISOString(),
                                         dataavaliacao: new Date().toISOString(),
-                                        nomeprato: avaliacaoEdit?.nomeprato,
+                                        idPrato: avaliacaoEdit?.idPrato,
                                     };
                                     editingAvaliacao(editedAvaliacao, avaliacaoEdit?.id ?? 0);
                                     toggleModalAvaliacao();
@@ -209,7 +211,7 @@ export default function AvaliacaoPage() {
                                         <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
                                         <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">Nota: {avaliacao.nota}</span>
                                         <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">{avaliacao.nomeprato}</span>
+                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">{avaliacao.idPrato}</span>
                                     </div>
                                     <div className='flex flex-col ml-[4.25rem]'>
                                         <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap break-words max-w-full">{avaliacao.texto}</p>

@@ -1,12 +1,13 @@
 export interface User {
+    id: number,
     email: string,
     username: string,
     nome: string,
     senha: string,
-    telefone: string | null
 }
 
 export interface Campus {
+    id: number,
     nome: string,
     email: string,
     endereco: string,
@@ -17,16 +18,16 @@ export interface Setor {
     id: number,
     nome: string;
     telefone: string | null;
-    nomecampus: string;
+    idCampus: number;
 }
 
 export interface Feedback {
     id: number,
-    data: Date | string, 
+    data: Date | string,
     texto: string,
     tipo: string,
     idsetor: number,
-    emailusuario: string;
+    idUsuario: number;
 }
 
 export interface Avaliacao {
@@ -36,12 +37,13 @@ export interface Avaliacao {
     texto: string;
     dataavaliacao: Date | string;
     dataconsumo: Date | string;
-    emailusuario: string;
-    nomeprato: string;
+    idUsuario: number;
+    idPrato: number;
 }
 
 export interface Prato {
+    id: number,
     nome: string,
-    kcalPrato?: number,
-    icone?: Buffer | null;
+    categoria: string | null,
+    icone?: string | null;
 }
