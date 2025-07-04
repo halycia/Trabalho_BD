@@ -47,3 +47,11 @@ export interface Prato {
     categoria: string | null,
     icone?: string | null;
 }
+
+export interface Comentario {
+    id: number;
+    texto: string;
+    data: Date | string;
+    idAvaliacao: number;
+    idUsuario: number;
+}

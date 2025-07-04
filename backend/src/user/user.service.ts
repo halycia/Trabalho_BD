@@ -54,7 +54,7 @@ export class UserService {
       novoUsuario.senha],
     );
 
-    return result.rows[0] as User;
+    return {message:"Usuário criado com sucesso"};
   }
 
   async findAllUsers(): Promise<User[]> {
@@ -95,7 +95,7 @@ export class UserService {
       ]
       );
 
-      return result.rows[0];
+      return {message:"Usuário atualizado com sucesso "};
     } catch (error: any) {
       throw new InternalServerErrorException('Atualização falhou');
     }

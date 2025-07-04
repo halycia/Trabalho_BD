@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PratoService } from './prato.service';
 import { Prato } from './prato.entity'; 
@@ -16,8 +17,8 @@ async findAll() : Promise<Prato[]> {
     return await this.pratoService.findAllPratos();
 }
 
-@Get(':id')
-  async findOnePrato(@Param('id') id:number): Promise<Prato | null> {
+@Get('id/:id')
+  async findOnePrato(@Param('id', ParseIntPipe) id:number): Promise<Prato | null> {
     return this.pratoService.findOnePrato(id);
   }
 

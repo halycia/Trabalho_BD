@@ -16,7 +16,6 @@ export default function Perfil() {
         username: '',
         nome: '',
         senha: '',
-        telefone: ''
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +39,7 @@ export default function Perfil() {
     }
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(`http://localhost:3000/user/${userInfo?.email}`);
+            const response = await axios.delete(`http://localhost:3000/user/${userInfo?.id}`);
             toast.success("Conta excluída com sucesso!", { autoClose: 2000 });
             localStorage.removeItem('token');
             router.push('/feed');
@@ -57,9 +56,8 @@ export default function Perfil() {
                 username: formEdit.username,
                 nome: formEdit.nome,
                 senha: formEdit.senha,
-                telefone: formEdit.telefone?.trim() === '' ? null : formEdit.telefone
             }
-            const response = await axios.patch(`http://localhost:3000/user/${userInfo?.email}`,
+            const response = await axios.patch(`http://localhost:3000/user/${userInfo?.id}`,
                 updateUser
             );
             toast.success("Informações atualizadas com sucesso!", { autoClose: 2000 });

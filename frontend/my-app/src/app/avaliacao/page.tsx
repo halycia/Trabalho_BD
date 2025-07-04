@@ -18,7 +18,8 @@ export default function AvaliacaoPage() {
     const [editAvaliacaoNota, setEditAvaliacaoNota] = useState<number>(-1);
     const [editAvaliacaoDataConsumo, setEditAvaliacaoDataConsumo] = useState<Date | null>(null);
     const [isModalEditAvaliacaoOpen, setIsModalEditAvaliacaoOpen] = useState(false);
-    const [pratosAvaliacoes, setPratoAvaliacoes] = useState <Re
+    const [pratosAvaliacoes, setPratoAvaliacoes] = useState<Map<number, string>>(new Map());
+
     const editingAvaliacao = async (avaliacaoEdit: Partial<Avaliacao>, id: number) => {
         try {
             await axios.patch(`http://localhost:3000/avaliacao/${id}`, avaliacaoEdit);
@@ -87,7 +88,16 @@ export default function AvaliacaoPage() {
             toast.error("Erro ao carregar avaliações.");
         }
     };
+    useEffect (()=> {
+         const findPratosAval = async ()=>{
+            for (const avaliacao of avaliacoes) {
+                const response = await axios.get(`http://localhost:3000/prato/${avaliacao.idPrato}`);
+                const nomePrato = response.data.nome;
+                setPratoAvaliacoes(prev => new Map(prev).set(avaliacao.id, nomePrato));
 
+            }
+        }
+    })
     const modalEditAvaliacao = () => (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
             <div className="h-auto text-black w-[60%] max-w-lg flex flex-col mx-auto bg-[#4a71ff] rounded-md items-center p-6">
@@ -211,7 +221,7 @@ export default function AvaliacaoPage() {
                                         <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
                                         <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">Nota: {avaliacao.nota}</span>
                                         <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">{avaliacao.idPrato}</span>
+                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">{pratosAvaliacoes.get(avaliacao.id)}</span>
                                     </div>
                                     <div className='flex flex-col ml-[4.25rem]'>
                                         <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap break-words max-w-full">{avaliacao.texto}</p>

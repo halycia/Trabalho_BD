@@ -28,7 +28,6 @@ export default function LoginPage() {
             });
 
             const { token } = response.data;
-            console.log("Token recebido:", token);
             localStorage.setItem('token', token);
 
             toast.success("Login realizado com sucesso!", {
