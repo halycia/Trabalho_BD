@@ -91,7 +91,7 @@ export default function AvaliacaoPage() {
     useEffect(() => {
         const findPratosAval = async () => {
             for (const avaliacao of avaliacoes) {
-                const response = await axios.get(`http://localhost:3000/prato/id/${avaliacao.idprato}`);
+                const response = await axios.get(`http://localhost:3000/prato/id/${avaliacao.id_prato}`);
                 const prato = response.data as Prato;
                 setPratoAvaliacoes(prev => new Map(prev).set(avaliacao.id, prato));
 
@@ -170,10 +170,10 @@ export default function AvaliacaoPage() {
                                     const editedAvaliacao: Partial<Avaliacao> = {
                                         texto: editAvaliacaoTexto,
                                         nota: editAvaliacaoNota,
-                                        idusuario: userInfo?.id,
-                                        dataconsumo: editAvaliacaoDataConsumo.toISOString(),
-                                        dataavaliacao: new Date().toISOString(),
-                                        idprato: avaliacaoEdit?.idprato,
+                                        id_usuario: userInfo?.id,
+                                        data_consumo: editAvaliacaoDataConsumo.toISOString(),
+                                        data_avaliacao: new Date().toISOString(),
+                                        id_prato: avaliacaoEdit?.id_prato,
                                     };
                                     editingAvaliacao(editedAvaliacao, avaliacaoEdit?.id ?? 0);
                                     toggleModalAvaliacao();
@@ -221,11 +221,11 @@ export default function AvaliacaoPage() {
                                     <div className="w-full items-center justify-center flex flex-row space-x-6">
                                         <div className="flex flex-col items-center">
                                             <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Data da avaliação</span>
-                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.dataavaliacao).toLocaleDateString()}</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.data_avaliacao).toLocaleDateString()}</span>
                                         </div>
                                         <div className="flex flex-col items-center">
                                             <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Data de consumo</span>
-                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.dataconsumo).toLocaleDateString()}</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.data_consumo).toLocaleDateString()}</span>
                                         </div>
                                         <div className="flex flex-col items-center">
                                             <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Refeição</span>
@@ -254,7 +254,7 @@ export default function AvaliacaoPage() {
                                         setAvaliacaoEdit(avaliacao);
                                         setEditAvaliacaoTexto(avaliacao.texto);
                                         setEditAvaliacaoNota(avaliacao.nota);
-                                        setEditAvaliacaoDataConsumo(new Date(avaliacao.dataconsumo));
+                                        setEditAvaliacaoDataConsumo(new Date(avaliacao.data_consumo));
                                         toggleModalAvaliacao();
                                     }}
                                     className='bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer'>

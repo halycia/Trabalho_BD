@@ -3,6 +3,6 @@ export interface Feedback {
     data: Date | string,
     texto: string,
     tipo: string,
-    idsetor: number,
-    idusuario: number;
+    id_setor: number,
+    id_usuario: number;
 }

@@ -154,10 +154,10 @@ export default function FeedPage() {
                                     creatingAvaliacao({
                                         texto: textoAvaliacao,
                                         nota: notaAvaliacao,
-                                        dataavaliacao: dataAvaliacao,
-                                        dataconsumo: dataConsumoAvaliacao.toLocaleDateString(),
-                                        idprato: pratoAvaliacao.id,
-                                        idusuario: userInfo?.id,
+                                        data_avaliacao: dataAvaliacao,
+                                        data_consumo: dataConsumoAvaliacao.toLocaleDateString(),
+                                        id_prato: pratoAvaliacao.id,
+                                        id_usuario: userInfo?.id,
                                         refeicao: refeicaoAvaliacao,
                                     });
                                 }
@@ -218,7 +218,7 @@ export default function FeedPage() {
 
     const creatingFeedback = async (feedback: Partial<Feedback>) => {
         try {
-            if (!feedback.texto || feedback.idsetor === -1 || !feedback.tipo) {
+            if (!feedback.texto || feedback.id_setor === -1 || !feedback.tipo) {
                 toast.error("Preencha todos os campos!");
                 return;
             }
@@ -347,8 +347,8 @@ export default function FeedPage() {
                                         texto: textoFeedback,
                                         tipo: tipo,
                                         data: dataFeedback,
-                                        idsetor: parseInt(setorSelected, 10),
-                                        idusuario: userInfo?.id
+                                        id_setor: parseInt(setorSelected, 10),
+                                        id_usuario: userInfo?.id
                                     });
                                 }
                             }}

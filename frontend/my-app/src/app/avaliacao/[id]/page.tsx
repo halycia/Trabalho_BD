@@ -58,9 +58,9 @@ export default function AvaliacaoDetailPage() {
     useEffect(() => {
         const findUserPratoAval = async () => {
             try {
-                if (avaliacao && avaliacao.idusuario) {
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${avaliacao.idusuario}`)).data;
-                    const pratoAvalResponse: Prato = (await axios.get(`http://localhost:3000/prato/id/${avaliacao.idusuario}`)).data;
+                if (avaliacao && avaliacao.id_usuario) {
+                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${avaliacao.id_usuario}`)).data;
+                    const pratoAvalResponse: Prato = (await axios.get(`http://localhost:3000/prato/id/${avaliacao.id_prato}`)).data;
                     setUserAval(userResponse);
                     setPratoAval(pratoAvalResponse);
                 }
@@ -91,8 +91,8 @@ export default function AvaliacaoDetailPage() {
                     const createComment = {
                         texto: textoNovoComentario,
                         data: new Date().toLocaleString(),
-                        idavaliacao: avaliacao.id,
-                        idusuario: userInfo.id
+                        id_avaliacao: avaliacao.id,
+                        id_usuario: userInfo.id
                     };
 
                     await axios.post('http://localhost:3000/comentario', createComment);
@@ -110,7 +110,7 @@ export default function AvaliacaoDetailPage() {
         const fetchUserComentarios = async () => {
             for (const comentario of comentarios) {
                 try {
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${comentario.idusuario}`)).data;
+                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${comentario.id_usuario}`)).data;
                     setUserComentarios(prev => new Map(prev).set(comentario.id, userResponse));
                 } catch (error: any) {
                     toast.error("Erro ao buscar informações do usuário do comentário.");
@@ -154,8 +154,8 @@ export default function AvaliacaoDetailPage() {
                 await axios.patch(`http://localhost:3000/comentario/${idComentarioEdit}`, {
                     texto: textoEditComentario,
                     data: new Date().toISOString(),
-                    idavaliacao: avaliacao?.id,
-                    idusuario: userInfo?.id
+                    id_avaliacao: avaliacao?.id,
+                    id_usuario: userInfo?.id
                 })
                 toggleModalEditComentario();
                 toast.success("Comentário editado com sucesso!");
@@ -259,11 +259,11 @@ export default function AvaliacaoDetailPage() {
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Data da avaliação</span>
-                                    <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.dataavaliacao).toLocaleString().split(',')[0]}</span>
+                                    <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.data_avaliacao).toLocaleString().split(',')[0]}</span>
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Data de consumo</span>
-                                    <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.dataconsumo).toLocaleString().split(',')[0]}</span>
+                                    <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.data_consumo).toLocaleString().split(',')[0]}</span>
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Refeição</span>
@@ -327,7 +327,7 @@ export default function AvaliacaoDetailPage() {
                                         <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Texto do Comentário</span>
                                         <p className="text-black text-[15px] font-[500] leading-[18.15px] pb-2 px-4 whitespace-pre-wrap break-words max-w-full text-center">{comentario.texto}</p>
                                     </div>
-                                    {userInfo?.id === comentario.idusuario && (
+                                    {userInfo?.id === comentario.id_usuario && (
                                         <div className="flex justify-center space-x-4 mt-2">
                                             <button
                                                 onClick={() => {

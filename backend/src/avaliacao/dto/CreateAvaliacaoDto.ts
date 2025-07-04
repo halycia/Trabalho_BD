@@ -8,17 +8,17 @@ export class CreateAvaliacaoDto {
   texto: string;
 
   @IsNotEmpty()
-  dataavaliacao: Date | string;
+  data_avaliacao: Date | string;
 
   @IsNotEmpty()
-  dataconsumo: Date | string;
+  data_consumo: Date | string;
 
   @IsNotEmpty()
-  idusuario: number;
+  id_usuario: number;
 
   @IsNotEmpty()
   refeicao: string;
 
   @IsNotEmpty()
-  idprato: number;
+  id_prato: number;
 }

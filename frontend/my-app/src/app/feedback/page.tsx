@@ -71,14 +71,14 @@ export default function UserFeedback() {
         const findSetorNomes = async () => {
             try {
                 for (const feedback of feedbacks) {
-                    const response = await axios.get(`http://localhost:3000/setor/${feedback.idsetor}`);
+                    const response = await axios.get(`http://localhost:3000/setor/${feedback.id_setor}`);
                     const nomeSetor = response.data.nome;
                     setNomeSetores(prev => new Map(prev).set(feedback.id, nomeSetor));
                     console.log("Setor object:", response.data)
                     const idCampus = response.data.idcampus;
                     const campus = await axios.get(`http://localhost:3000/campus/${idCampus}`);
                     const nomeCampus = campus.data.nome;
-                    setNomeCampus(prev => new Map(prev).set(feedback.idsetor, nomeCampus));
+                    setNomeCampus(prev => new Map(prev).set(feedback.id_setor, nomeCampus));
 
                 }
             } catch (error) {
@@ -190,8 +190,8 @@ export default function UserFeedback() {
                                     const editedFeedback: Partial<Feedback> = {
                                         texto: feedbackEscolhidoTexto,
                                         tipo: editFeedbackTipo,
-                                        idsetor: feedbackEscolhido?.idsetor,
-                                        idusuario: userInfo?.id,
+                                        id_setor: feedbackEscolhido?.id_setor,
+                                        id_usuario: userInfo?.id,
                                         data: new Date().toISOString(),
                                     };
                                     editingFeedback(editedFeedback, feedbackEscolhido?.id ?? 0);
@@ -242,7 +242,7 @@ export default function UserFeedback() {
                                         </div>
                                         <div className="flex flex-col items-center">
                                             <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Campus</span>
-                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{nomeCampus.get(feedback.idsetor)}</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{nomeCampus.get(feedback.id_setor)}</span>
                                         </div>
                                         <div className="flex flex-col items-center">
                                             <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Setor</span>
@@ -263,7 +263,7 @@ export default function UserFeedback() {
                                         setFeedbackEscolhido(feedback);
                                         setFeedbackEscolhidoTexto(feedback.texto);
                                         setEditFeedbackTipo(feedback.tipo);
-                                        findCampusEditFeedback(feedback.idsetor);
+                                        findCampusEditFeedback(feedback.id_setor);
                                         toggleModalEditFeedback()
                                     }}
                                     className='bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer'>

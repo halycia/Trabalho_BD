@@ -2,25 +2,25 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { Prato } from './prato.entity'; 
+import { Prato } from './prato.entity';
 import { infoPrato } from './infoPrato.entity';
 @Injectable()
 export class PratoService {
-  constructor(private db: DatabaseService) {}
+  constructor(private db: DatabaseService) { }
 
-  async findOnePrato(id:number): Promise<Prato | null> {
+  async findOnePrato(id: number): Promise<Prato | null> {
     const result = await this.db.query(
-      'SELECT * FROM prato WHERE id = $1',
+      'SELECT * FROM Prato WHERE id = $1',
       [id],
     );
     return result.rows[0] as Prato ?? null;
   }
-    async findAllPratos(): Promise<Prato[]> {
-    const result = await this.db.query('SELECT * FROM prato');
+  async findAllPratos(): Promise<Prato[]> {
+    const result = await this.db.query('SELECT * FROM Prato');
     return result.rows as Prato[];
   }
 
-  async findInfoPrato(): Promise<infoPrato[]>{
+  async findInfoPrato(): Promise<infoPrato[]> {
     const result = await this.db.query('SELECT * FROM media_prato');
     return result.rows as infoPrato[];
   }

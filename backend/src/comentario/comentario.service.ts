@@ -18,38 +18,38 @@ export class ComentarioService {
 
   async createComentario(createComentarioDto: CreateComentarioDto) {
     const userExists = await this.userService.findUserById(
-      createComentarioDto.idusuario,
+      createComentarioDto.id_usuario,
     );
     if (!userExists) {
       throw new ConflictException('Não existe usuário com esse email');
     }
     const avaliacaoExists = await this.avaliacaoService.findAvaliacaoById(
-      createComentarioDto.idavaliacao,
+      createComentarioDto.id_avaliacao,
     );
     if (!avaliacaoExists) {
       throw new NotFoundException('Avaliação não encontrada');
     }
 
     const result = await this.db.query(
-      'INSERT INTO comentario (texto, data, idavaliacao, idusuario) VALUES ($1, $2, $3, $4)',
+      'INSERT INTO Comentario (texto, data, id_avaliacao, id_usuario) VALUES ($1, $2, $3, $4)',
       [
         createComentarioDto.texto,
         createComentarioDto.data,
-        createComentarioDto.idavaliacao,
-        createComentarioDto.idusuario,
+        createComentarioDto.id_avaliacao,
+        createComentarioDto.id_usuario,
       ],
     );
     return { message: "Comentário criado com sucesso!" };
   }
 
   async findAll() {
-    const result = await this.db.query('SELECT * FROM comentario');
+    const result = await this.db.query('SELECT * FROM Comentario');
     return result.rows as Comentario[];
   }
 
   async findOne(id: number) {
     const result = await this.db.query(
-      'SELECT * FROM comentario WHERE id = $1',
+      'SELECT * FROM Comentario WHERE id = $1',
       [id],
     );
     if (result.rows.length === 0) {
@@ -67,25 +67,25 @@ export class ComentarioService {
     };
 
     const userExists = await this.userService.findUserById(
-      updatedComentario.idusuario,
+      updatedComentario.id_usuario,
     );
     if (!userExists) {
       throw new ConflictException('Não existe usuário com esse email');
     }
     const avaliacaoExists = await this.avaliacaoService.findAvaliacaoById(
-      updatedComentario.idavaliacao,
+      updatedComentario.id_avaliacao,
     );
     if (!avaliacaoExists) {
       throw new NotFoundException('Avaliação não encontrada');
     }
 
     const result = await this.db.query(
-      'UPDATE comentario SET texto = $1, data = $2, idavaliacao = $3, idusuario = $4 WHERE id = $5',
+      'UPDATE comentario SET texto = $1, data = $2, id_avaliacao = $3, id_usuario = $4 WHERE id = $5',
       [
         updatedComentario.texto,
         updatedComentario.data,
-        updatedComentario.idavaliacao,
-        updatedComentario.idusuario,
+        updatedComentario.id_avaliacao,
+        updatedComentario.id_usuario,
         id,
       ],
     );
@@ -94,7 +94,7 @@ export class ComentarioService {
 
   async deleteComentario(id: number) {
     const result = await this.db.query(
-      'DELETE FROM comentario WHERE id = $1',
+      'DELETE FROM Comentario WHERE id = $1',
       [id],
     );
     if (result.rows.length === 0) {
@@ -105,7 +105,7 @@ export class ComentarioService {
 
   async findComentariosFromAvaliacao(idAvaliacao: number,): Promise<Comentario[]> {
     const result = await this.db.query(
-      'SELECT * FROM comentario WHERE idavaliacao = $1',
+      'SELECT * FROM Comentario WHERE id_avaliacao = $1',
       [idAvaliacao],
     );
     return result.rows as Comentario[];

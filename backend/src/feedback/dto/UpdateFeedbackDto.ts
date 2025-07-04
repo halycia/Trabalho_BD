@@ -12,8 +12,8 @@ export class UpdateFeedbackDto {
   tipo: string;
 
   @IsNotEmpty()
-  idsetor: number;
+  id_setor: number;
 
   @IsNotEmpty()
-  idusuario: number;
+  id_usuario: number;
 }

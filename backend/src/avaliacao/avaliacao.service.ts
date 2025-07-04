@@ -1,7 +1,5 @@
 import {
     Injectable,
-    ConflictException,
-    NotFoundException,
     InternalServerErrorException,
     BadRequestException,
 } from '@nestjs/common';
@@ -27,19 +25,19 @@ export class AvaliacaoService {
         return result.rows as Avaliacao[];
     }
 
-    async findAvalsFromUser(idusuario: number): Promise<Avaliacao[]> {
+    async findAvalsFromUser(id_usuario: number): Promise<Avaliacao[]> {
         const result = await this.db.query(
-            'SELECT * FROM avaliacao WHERE idusuario = $1',
-            [idusuario],
+            'SELECT * FROM avaliacao WHERE id_usuario = $1',
+            [id_usuario],
         );
         return result.rows as Avaliacao[];
     }
 
     async createAvaliacao(newAvaliacao: CreateAvaliacaoDto) {
         const result = await this.db.query(
-            `INSERT INTO avaliacao (nota, dataavaliacao, dataconsumo, texto, idusuario, idprato, refeicao)
+            `INSERT INTO avaliacao (nota, data_avaliacao, data_consumo, texto, id_usuario, id_prato, refeicao)
         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [newAvaliacao.nota, newAvaliacao.dataavaliacao, newAvaliacao.dataconsumo, newAvaliacao.texto, newAvaliacao.idusuario, newAvaliacao.idprato, newAvaliacao.refeicao]);
+            [newAvaliacao.nota, newAvaliacao.data_avaliacao, newAvaliacao.data_consumo, newAvaliacao.texto, newAvaliacao.id_usuario, newAvaliacao.id_prato, newAvaliacao.refeicao]);
         return result.rows[0];
     }
 
@@ -47,11 +45,11 @@ export class AvaliacaoService {
         try {
             const updateAvaliacao = await this.findAvaliacaoById(id);
             const result = await this.db.query(
-                'UPDATE avaliacao SET nota = $1, texto = $2, dataconsumo = $3, dataavaliacao = $4 WHERE id = $5', [
+                'UPDATE avaliacao SET nota = $1, texto = $2, data_consumo = $3, data_avaliacao = $4 WHERE id = $5', [
                 avaliacao.nota ?? updateAvaliacao.nota,
                 avaliacao.texto ?? updateAvaliacao.texto,
-                avaliacao.dataconsumo ?? updateAvaliacao.dataconsumo,
-                avaliacao.dataavaliacao ?? updateAvaliacao.dataavaliacao,
+                avaliacao.data_consumo ?? updateAvaliacao.data_consumo,
+                avaliacao.data_avaliacao ?? updateAvaliacao.data_avaliacao,
                 id
             ]
             );
