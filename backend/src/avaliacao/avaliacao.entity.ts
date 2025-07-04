@@ -1,9 +1,10 @@
-export interface Avaliacao{
+export interface Avaliacao {
     id: number;
     nota: number;
     texto: string;
     dataavaliacao: Date | string;
     dataconsumo: Date | string;
-    idUsuario: number;
-    idPrato: number;
+    idusuario: number;
+    idprato: number;
+    refeicao: string;
 }

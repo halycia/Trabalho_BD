@@ -54,7 +54,7 @@ export class UserService {
       novoUsuario.senha],
     );
 
-    return {message:"Usuário criado com sucesso"};
+    return { message: "Usuário criado com sucesso" };
   }
 
   async findAllUsers(): Promise<User[]> {
@@ -65,37 +65,34 @@ export class UserService {
 
   async updateUser(id: number, updates: UpdateUserDto) {
     const localUser = await this.findUserById(id);
-    if (updates.email) {
+
+    if (updates.email && updates.email !== localUser.email) {
       const UserEmail = await this.findUserByEmail(updates.email);
-      if (UserEmail && UserEmail.email === localUser.email) {
+      if (UserEmail) {
         throw new ConflictException('Email já cadastrado');
       }
     }
-    if (updates.username) {
+    if (updates.username && updates.username !== localUser.username) {
       const UserUsername = await this.findUserByUsername(updates.username);
-      if (UserUsername && UserUsername.username !== updates.username) {
+      if (UserUsername) {
         throw new ConflictException('Nome de usuário em uso');
       }
     }
     try {
-      const userUpdated = await this.findUserById(id);
-      if (!userUpdated) {
-        throw new NotFoundException(`Usuário com email ${id} não encontrado`);
-      }
       const result = await this.db.query(
         `UPDATE usuario 
         SET nome=$1, email=$2,
         username=$3, senha=$4
         WHERE id = $5 `, [
-        updates.nome ?? userUpdated.nome,
-        updates.email ?? userUpdated.email,
-        updates.username ?? userUpdated.username,
-        updates.senha ?? userUpdated.senha,
+        updates.nome ?? localUser.nome,
+        updates.email ?? localUser.email,
+        updates.username ?? localUser.username,
+        updates.senha ?? localUser.senha,
         id
       ]
       );
 
-      return {message:"Usuário atualizado com sucesso "};
+      return { message: "Usuário atualizado com sucesso " };
     } catch (error: any) {
       throw new InternalServerErrorException('Atualização falhou');
     }

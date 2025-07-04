@@ -12,44 +12,44 @@ import { Comentario } from './comentario.entity';
 
 @Injectable()
 export class ComentarioService {
-  constructor(private db: DatabaseService) {}
+  constructor(private db: DatabaseService) { }
   userService = new UserService(this.db);
   avaliacaoService = new AvaliacaoService(this.db);
 
   async createComentario(createComentarioDto: CreateComentarioDto) {
     const userExists = await this.userService.findUserById(
-      createComentarioDto.idUsuario,
+      createComentarioDto.idusuario,
     );
     if (!userExists) {
       throw new ConflictException('Não existe usuário com esse email');
     }
     const avaliacaoExists = await this.avaliacaoService.findAvaliacaoById(
-      createComentarioDto.idAvaliacao,
+      createComentarioDto.idavaliacao,
     );
     if (!avaliacaoExists) {
       throw new NotFoundException('Avaliação não encontrada');
     }
 
     const result = await this.db.query(
-      'INSERT INTO comentario (texto, data, idAvaliacao, idUsuario) VALUES ($1, $2, $3, $4)',
+      'INSERT INTO comentario (texto, data, idavaliacao, idusuario) VALUES ($1, $2, $3, $4)',
       [
         createComentarioDto.texto,
         createComentarioDto.data,
-        createComentarioDto.idAvaliacao,
-        createComentarioDto.idUsuario,
+        createComentarioDto.idavaliacao,
+        createComentarioDto.idusuario,
       ],
     );
     return { message: "Comentário criado com sucesso!" };
   }
 
   async findAll() {
-    const result = await this.db.query('SELECT * FROM Comentario');
+    const result = await this.db.query('SELECT * FROM comentario');
     return result.rows as Comentario[];
   }
 
   async findOne(id: number) {
     const result = await this.db.query(
-      'SELECT * FROM Comentario WHERE id = $1',
+      'SELECT * FROM comentario WHERE id = $1',
       [id],
     );
     if (result.rows.length === 0) {
@@ -67,29 +67,29 @@ export class ComentarioService {
     };
 
     const userExists = await this.userService.findUserById(
-      updatedComentario.idUsuario,
+      updatedComentario.idusuario,
     );
     if (!userExists) {
       throw new ConflictException('Não existe usuário com esse email');
     }
     const avaliacaoExists = await this.avaliacaoService.findAvaliacaoById(
-      updatedComentario.idAvaliacao,
+      updatedComentario.idavaliacao,
     );
     if (!avaliacaoExists) {
       throw new NotFoundException('Avaliação não encontrada');
     }
 
     const result = await this.db.query(
-      'UPDATE comentario SET texto = $1, data = $2, qntCurtidas = $3, idAvaliacao = $4, idUsuario = $5 WHERE id = $6',
+      'UPDATE comentario SET texto = $1, data = $2, idavaliacao = $3, idusuario = $4 WHERE id = $5',
       [
         updatedComentario.texto,
         updatedComentario.data,
-        updatedComentario.idAvaliacao,
-        updatedComentario.idUsuario,
+        updatedComentario.idavaliacao,
+        updatedComentario.idusuario,
         id,
       ],
     );
-    return {message: "Comentário atualizado com sucesso!"};
+    return { message: "Comentário atualizado com sucesso!" };
   }
 
   async deleteComentario(id: number) {
@@ -103,7 +103,7 @@ export class ComentarioService {
     return result.rows[0];
   }
 
-  async  findComentariosFromAvaliacao( idAvaliacao: number,): Promise<Comentario[]> {
+  async findComentariosFromAvaliacao(idAvaliacao: number,): Promise<Comentario[]> {
     const result = await this.db.query(
       'SELECT * FROM comentario WHERE idavaliacao = $1',
       [idAvaliacao],

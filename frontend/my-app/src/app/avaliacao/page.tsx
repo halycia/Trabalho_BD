@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import HeaderLogado from "@/components/headers/logado";
 import { Avaliacao } from "@/types";
-import { User } from "@/types";
+import { User, Prato } from "@/types";
 
 export default function AvaliacaoPage() {
     const router = useRouter();
@@ -18,7 +18,7 @@ export default function AvaliacaoPage() {
     const [editAvaliacaoNota, setEditAvaliacaoNota] = useState<number>(-1);
     const [editAvaliacaoDataConsumo, setEditAvaliacaoDataConsumo] = useState<Date | null>(null);
     const [isModalEditAvaliacaoOpen, setIsModalEditAvaliacaoOpen] = useState(false);
-    const [pratosAvaliacoes, setPratoAvaliacoes] = useState<Map<number, string>>(new Map());
+    const [pratosAvaliacoes, setPratoAvaliacoes] = useState<Map<number, Prato>>(new Map());
 
     const editingAvaliacao = async (avaliacaoEdit: Partial<Avaliacao>, id: number) => {
         try {
@@ -58,9 +58,9 @@ export default function AvaliacaoPage() {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const decoded: { sub: string } = jwtDecode(token);
-                    const email = decoded.sub;
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/email/${email}`)).data;
+                    const decoded: { sub: number } = jwtDecode(token);
+                    const id = decoded.sub;
+                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
                     setUserInfo(userResponse);
                 }
                 else {
@@ -76,28 +76,30 @@ export default function AvaliacaoPage() {
 
     useEffect(() => {
         if (userInfo) {
-            fetchAvaliacoesUser(userInfo.email);
+            fetchAvaliacoesUser(userInfo.id);
         }
     }, [userInfo]);
 
-    const fetchAvaliacoesUser = async (email: string) => {
+    const fetchAvaliacoesUser = async (id: number) => {
         try {
-            const response = await axios.get(`http://localhost:3000/avaliacao/user/${email}`);
+            const response = await axios.get(`http://localhost:3000/avaliacao/user/${id}`);
             setAvaliacoes(response.data);
         } catch (error) {
             toast.error("Erro ao carregar avaliações.");
         }
     };
-    useEffect (()=> {
-         const findPratosAval = async ()=>{
+    useEffect(() => {
+        const findPratosAval = async () => {
             for (const avaliacao of avaliacoes) {
-                const response = await axios.get(`http://localhost:3000/prato/${avaliacao.idPrato}`);
-                const nomePrato = response.data.nome;
-                setPratoAvaliacoes(prev => new Map(prev).set(avaliacao.id, nomePrato));
+                const response = await axios.get(`http://localhost:3000/prato/id/${avaliacao.idprato}`);
+                const prato = response.data as Prato;
+                setPratoAvaliacoes(prev => new Map(prev).set(avaliacao.id, prato));
 
             }
         }
-    })
+        findPratosAval();
+    }, [avaliacoes])
+
     const modalEditAvaliacao = () => (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
             <div className="h-auto text-black w-[60%] max-w-lg flex flex-col mx-auto bg-[#4a71ff] rounded-md items-center p-6">
@@ -168,14 +170,14 @@ export default function AvaliacaoPage() {
                                     const editedAvaliacao: Partial<Avaliacao> = {
                                         texto: editAvaliacaoTexto,
                                         nota: editAvaliacaoNota,
-                                        idUsuario: userInfo?.id,
+                                        idusuario: userInfo?.id,
                                         dataconsumo: editAvaliacaoDataConsumo.toISOString(),
                                         dataavaliacao: new Date().toISOString(),
-                                        idPrato: avaliacaoEdit?.idPrato,
+                                        idprato: avaliacaoEdit?.idprato,
                                     };
                                     editingAvaliacao(editedAvaliacao, avaliacaoEdit?.id ?? 0);
                                     toggleModalAvaliacao();
-                                    fetchAvaliacoesUser(userInfo?.email ?? '');
+                                    fetchAvaliacoesUser(userInfo?.id ?? 0);
                                 }
                             }}
                         >
@@ -211,20 +213,38 @@ export default function AvaliacaoPage() {
                     avaliacoes.map(avaliacao => (
                         <div key={avaliacao.id} className="w-full max-w-[45%] bg-[#49ffff] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit">
                             <div className="w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
-                                <div className="flex flex-col justify-center items-center pl-3 space-y-4 mt-2">
-                                    <div className='flex ml-3 items-center'>
-                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">Data da avaliação: {new Date(avaliacao.dataavaliacao).toLocaleDateString()}</span>
-                                        <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex"> Data de consumo: {new Date(avaliacao.dataconsumo).toLocaleDateString()}</span>
-                                        <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">Refeição: {avaliacao.refeicao}</span>
-                                        <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">Nota: {avaliacao.nota}</span>
-                                        <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                        <span className="font-sans text-[#71767B] text-sm font-[350] leading-[16.94px] flex">{pratosAvaliacoes.get(avaliacao.id)}</span>
+                                <div
+                                    onClick={() => {
+                                        router.push(`/avaliacao/${avaliacao.id}`);
+                                    }}
+                                    className="flex flex-col justify-center items-center pl-3 space-y-4 mt-2 cursor-pointer">
+                                    <div className="w-full items-center justify-center flex flex-row space-x-6">
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Data da avaliação</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.dataavaliacao).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Data de consumo</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(avaliacao.dataconsumo).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Refeição</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{avaliacao.refeicao}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Nota</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{avaliacao.nota}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Prato</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{pratosAvaliacoes.get(avaliacao.id)?.nome}</span>
+                                        </div>
                                     </div>
-                                    <div className='flex flex-col ml-[4.25rem]'>
-                                        <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap break-words max-w-full">{avaliacao.texto}</p>
+                                    <div className='w-full mt-4'>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Texto da Avaliação</span>
+                                            <p className="text-black text-[15px] font-[500] leading-[18.15px] pb-2 px-4 whitespace-pre-wrap break-words max-w-full text-center">{avaliacao.texto}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@ import { Comentario } from './comentario.entity';
 
 @Controller('comentario')
 export class ComentarioController {
-  constructor(private readonly comentarioService: ComentarioService) {}
+  constructor(private readonly comentarioService: ComentarioService) { }
 
   @Post()
   createComentario(@Body() createComentarioDto: CreateComentarioDto) {
@@ -28,15 +28,15 @@ export class ComentarioController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number):Promise<Comentario> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Comentario> {
     return this.comentarioService.findOne(id);
   }
 
-  @Get ('avaliacao/:idAvaliacao')
+  @Get('avaliacao/:idAvaliacao')
   findComentariosFromAvaliacao(
     @Param('idAvaliacao', ParseIntPipe) idAvaliacao: number,
   ): Promise<Comentario[]> {
-    return this.comentarioService.  findComentariosFromAvaliacao(idAvaliacao);
+    return this.comentarioService.findComentariosFromAvaliacao(idAvaliacao);
   }
 
   @Patch(':id')

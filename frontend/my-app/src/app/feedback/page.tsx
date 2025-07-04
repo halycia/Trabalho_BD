@@ -8,7 +8,6 @@ import { toast } from 'react-toastify';
 import HeaderLogado from "@/components/headers/logado";
 
 import axios from 'axios';
-import { error } from 'console';
 export default function UserFeedback() {
     const [userInfo, setUserInfo] = useState<User | null>(null);
     const router = useRouter();
@@ -22,12 +21,8 @@ export default function UserFeedback() {
     const [nomeCampus, setNomeCampus] = useState<Map<number, string>>(new Map());
 
     const findCampusEditFeedback = async (idSetor: number) => {
-        try {
-            const response = await axios.get(`http://localhost:3000/setor/${idSetor}`);
-            setCampusEditFeedback(response.data.nomecampus);
-        } catch (error) {
-            toast.error("Erro ao buscar nome do campus");
-        }
+        setCampusEditFeedback(nomeCampus.get(idSetor) || '');
+
     }
     const toggleModalEditFeedback = () => {
         setIsModalEditFeedbackOpen(!isModalEditFeedbackOpen);
@@ -79,7 +74,10 @@ export default function UserFeedback() {
                     const response = await axios.get(`http://localhost:3000/setor/${feedback.idsetor}`);
                     const nomeSetor = response.data.nome;
                     setNomeSetores(prev => new Map(prev).set(feedback.id, nomeSetor));
-                    const nomeCampus = response.data.nomecampus;
+                    console.log("Setor object:", response.data)
+                    const idCampus = response.data.idcampus;
+                    const campus = await axios.get(`http://localhost:3000/campus/${idCampus}`);
+                    const nomeCampus = campus.data.nome;
                     setNomeCampus(prev => new Map(prev).set(feedback.idsetor, nomeCampus));
 
                 }
@@ -193,7 +191,7 @@ export default function UserFeedback() {
                                         texto: feedbackEscolhidoTexto,
                                         tipo: editFeedbackTipo,
                                         idsetor: feedbackEscolhido?.idsetor,
-                                        idUsuario: userInfo?.id,
+                                        idusuario: userInfo?.id,
                                         data: new Date().toISOString(),
                                     };
                                     editingFeedback(editedFeedback, feedbackEscolhido?.id ?? 0);
@@ -232,25 +230,29 @@ export default function UserFeedback() {
                     feedbacks.map((feedback) => (
                         <div key={feedback.id} className=" w-full max-w-[40%] bg-[#49ffff] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit">
                             <div className=" w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
-                                <div className="flex flex-col space-y-5 items-center pl-3 mt-2">
-                                    <div className="pl-1">
-                                        <div className='flex ml-3 items-center'>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{new Date(feedback.data).toLocaleDateString()} </span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{feedback.tipo}</span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{nomeCampus.get(feedback.idsetor)}</span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{nomeSetores.get(feedback.id)}</span>
-
-
+                                <div className="flex flex-col justify-center items-center pl-3 space-y-4 mt-2">
+                                    <div className="w-full items-center justify-center flex flex-row space-x-6">
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Data</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{new Date(feedback.data).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Tipo</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{feedback.tipo}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Campus</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{nomeCampus.get(feedback.idsetor)}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Setor</span>
+                                            <span className="font-sans text-black text-sm font-[350] leading-[16.94px]">{nomeSetores.get(feedback.id)}</span>
                                         </div>
                                     </div>
-                                    <div className='flex flex-col ml-[4.25rem]'>
-                                        <div>
-                                            <div>
-                                                <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap break-words max-w-full">{feedback.texto}</p>
-                                            </div>
+                                    <div className='w-full mt-4'>
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-sans text-[#71767B] text-sm font-bold leading-[16.94px] mb-1">Texto do Feedback</span>
+                                            <p className="text-black text-[15px] font-[500] leading-[18.15px] pb-2 px-4 whitespace-pre-wrap break-words max-w-full text-center">{feedback.texto}</p>
                                         </div>
                                     </div>
                                 </div>

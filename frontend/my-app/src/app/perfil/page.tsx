@@ -45,7 +45,6 @@ export default function Perfil() {
             router.push('/feed');
         } catch (error: any) {
             toast.error("Erro ao excluir conta.");
-            console.log(error);
         }
     }
     const handleSubmit = async (e: React.FormEvent) => {
@@ -99,8 +98,6 @@ export default function Perfil() {
         const fetchUserInfo = async () => {
             try {
                 const token = localStorage.getItem('token');
-                console.log("Token:", token);
-
                 if (token) {
                     const decoded: { sub: number } = jwtDecode(token);
                     const id = decoded.sub;
@@ -129,82 +126,82 @@ export default function Perfil() {
     if (!userInfo) {
         return <div className="min-h-screen bg-gray-200">  </div>
     }
-return(
-    <div className="min-h-screen bg-gray-200">
-        <HeaderLogado/>
-        <div className="flex flex-col items-center justify-center pt-4"> 
-            <h1 className="text-2xl font-bold mb-4">Informações do perfil</h1>
-            <div className="w-2/4 h-1/2 flex flex-row items-center justify-center bg-white rounded-lg shadow-lg p-10">
-                <form onSubmit={handleSubmit} >
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Nome</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="text"
-                            name="nome"
-                            value={formEdit.nome}
-                            onChange={handleChange}
-                            className="pl-2 pb-1 w-full"
-                            required
-                        />
-                    </div>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Email</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="email"
-                            name="email"
-                            value={formEdit.email}
-                            onChange={handleChange}
-                            className="pl-2 pb-1 w-full"
-                            required
-                        />
+    return (
+        <div className="min-h-screen bg-gray-200">
+            <HeaderLogado />
+            <div className="flex flex-col items-center justify-center pt-4">
+                <h1 className="text-2xl font-bold mb-4">Informações do perfil</h1>
+                <div className="w-2/4 h-1/2 flex flex-row items-center justify-center bg-white rounded-lg shadow-lg p-10">
+                    <form onSubmit={handleSubmit} >
+                        <label className=" mb-2 text-sm font-medium text-gray-700">Nome</label>
+                        <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
+                            <input
+                                type="text"
+                                name="nome"
+                                value={formEdit.nome}
+                                onChange={handleChange}
+                                className="pl-2 pb-1 w-full"
+                                required
+                            />
+                        </div>
+                        <label className=" mb-2 text-sm font-medium text-gray-700">Email</label>
+                        <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
+                            <input
+                                type="email"
+                                name="email"
+                                value={formEdit.email}
+                                onChange={handleChange}
+                                className="pl-2 pb-1 w-full"
+                                required
+                            />
 
-                    </div>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Senha</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="password"
-                            name="senha"
-                            value={formEdit.senha}
-                            onChange={handleChange}
-                            placeholder="********"
-                            className="pl-2 pb-1 w-full"
-                            required
-                        />
-                    </div>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Nome de usuário</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="text"
-                            name="username"
-                            value={formEdit.username}
-                            onChange={handleChange}
-                            className="pl-2 pb-1 w-full"
-                            required
-                        />
-                    </div>
+                        </div>
+                        <label className=" mb-2 text-sm font-medium text-gray-700">Senha</label>
+                        <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
+                            <input
+                                type="password"
+                                name="senha"
+                                value={formEdit.senha}
+                                onChange={handleChange}
+                                placeholder="********"
+                                className="pl-2 pb-1 w-full"
+                                required
+                            />
+                        </div>
+                        <label className=" mb-2 text-sm font-medium text-gray-700">Nome de usuário</label>
+                        <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
+                            <input
+                                type="text"
+                                name="username"
+                                value={formEdit.username}
+                                onChange={handleChange}
+                                className="pl-2 pb-1 w-full"
+                                required
+                            />
+                        </div>
 
-                    <div className="flex flex-row space-x-2">
-                        <button
-                            type="submit"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 cursor-pointer rounded"
-                        >
-                            Editar
-                        </button>
-                        <button
-                            type="button"
-                            className="bg-blue-500 hover:bg-red-600 text-white font-bold py-2 px-4 cursor-pointer rounded"
-                            onClick={handleCancel}>
-                            Cancelar
-                        </button>
-                        <button
-                            onClick={ConfirmDelete}
-                            type="button"
-                            className="bg-blue-500 hover:bg-black text-white font-bold py-2 px-4 cursor-pointer rounded">
-                            Excluir
-                        </button>
-                    </div>
-                </form>
-            </div>
+                        <div className="flex flex-row space-x-2">
+                            <button
+                                type="submit"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 cursor-pointer rounded"
+                            >
+                                Editar
+                            </button>
+                            <button
+                                type="button"
+                                className="bg-blue-500 hover:bg-red-600 text-white font-bold py-2 px-4 cursor-pointer rounded"
+                                onClick={handleCancel}>
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={ConfirmDelete}
+                                type="button"
+                                className="bg-blue-500 hover:bg-black text-white font-bold py-2 px-4 cursor-pointer rounded">
+                                Excluir
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

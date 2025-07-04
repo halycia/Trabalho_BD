@@ -27,7 +27,7 @@ export interface Feedback {
     texto: string,
     tipo: string,
     idsetor: number,
-    idUsuario: number;
+    idusuario: number;
 }
 
 export interface Avaliacao {
@@ -37,8 +37,8 @@ export interface Avaliacao {
     texto: string;
     dataavaliacao: Date | string;
     dataconsumo: Date | string;
-    idUsuario: number;
-    idPrato: number;
+    idusuario: number;
+    idprato: number;
 }
 
 export interface Prato {
@@ -52,6 +52,6 @@ export interface Comentario {
     id: number;
     texto: string;
     data: Date | string;
-    idAvaliacao: number;
-    idUsuario: number;
+    idavaliacao: number;
+    idusuario: number;
 }

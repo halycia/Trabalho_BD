@@ -1,4 +1,4 @@
-import {IsNotEmpty} from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class UpdateAvaliacaoDto {
   @IsNotEmpty()
@@ -15,7 +15,7 @@ export class UpdateAvaliacaoDto {
 
   @IsNotEmpty()
   idusuario: number;
-  
+
   @IsNotEmpty()
   idprato: number;
 }

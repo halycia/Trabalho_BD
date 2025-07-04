@@ -8,8 +8,8 @@ export class CreateComentarioDto {
   data: Date | string;
 
   @IsNotEmpty()
-  idAvaliacao: number;
+  idavaliacao: number;
 
   @IsNotEmpty()
-  idUsuario: number;
+  idusuario: number;
 }

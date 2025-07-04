@@ -1,4 +1,4 @@
-import {IsDate, IsNotEmpty} from 'class-validator';
+import { IsDate, IsNotEmpty } from 'class-validator';
 
 export class CreateAvaliacaoDto {
   @IsNotEmpty()
@@ -11,7 +11,7 @@ export class CreateAvaliacaoDto {
   dataavaliacao: Date | string;
 
   @IsNotEmpty()
-  dataconsumo: Date |string;
+  dataconsumo: Date | string;
 
   @IsNotEmpty()
   idusuario: number;

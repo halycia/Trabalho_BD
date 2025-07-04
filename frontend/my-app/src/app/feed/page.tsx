@@ -43,6 +43,7 @@ export default function FeedPage() {
     const resetAvaliacaoModalFields = () => {
         setTextoAvaliacao("");
         setNotaAvaliacao(-1);
+        setRefeicaoAvaliacao("");
         setdataConsumoAvaliacao(null);
         setPratoAvaliacao(null);
     }
@@ -155,8 +156,8 @@ export default function FeedPage() {
                                         nota: notaAvaliacao,
                                         dataavaliacao: dataAvaliacao,
                                         dataconsumo: dataConsumoAvaliacao.toLocaleDateString(),
-                                        idPrato: pratoAvaliacao.id,
-                                        idUsuario: userInfo?.id,
+                                        idprato: pratoAvaliacao.id,
+                                        idusuario: userInfo?.id,
                                         refeicao: refeicaoAvaliacao,
                                     });
                                 }
@@ -174,9 +175,9 @@ export default function FeedPage() {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const decoded: { sub: string } = jwtDecode(token);
-                    const email = decoded.sub;
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/email/${email}`)).data;
+                    const decoded: { sub: number } = jwtDecode(token);
+                    const id = decoded.sub;
+                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
                     setUserInfo(userResponse);
                 }
             } catch (error) {
@@ -200,10 +201,11 @@ export default function FeedPage() {
         getCampus();
     }, []);
 
-    const findSetoresForCampus = async (campusNome: string) => {
+    const findSetoresForCampus = async (campusId: string) => {
         try {
-            if (campusNome !== "-1") {
-                const response = await axios.get(`http://localhost:3000/setor/campus/${campusNome}`);
+            if (campusId !== "-1") {
+
+                const response = await axios.get(`http://localhost:3000/setor/campus/${campusId}`);
                 setSetores(response.data as Setor[]);
             } else {
                 setSetores([]);
@@ -226,7 +228,8 @@ export default function FeedPage() {
             setTimeout(() => {
                 toggleFeedbackModal();
             }, 500);
-        } catch {
+        } catch (error) {
+            console.error("Erro ao criar feedback", error);
             toast.error("Erro ao criar feedback. Por favor, tente novamente.");
         }
     };
@@ -255,7 +258,7 @@ export default function FeedPage() {
                 >
                     <option value="-1" disabled>Selecione o campus</option>
                     {campus.map((campusItem) => (
-                        <option key={campusItem.nome} value={campusItem.nome}>
+                        <option key={campusItem.id} value={campusItem.id}>
                             {campusItem.nome}
                         </option>
                     ))}
@@ -337,20 +340,16 @@ export default function FeedPage() {
                             onClick={() => {
                                 if (!textoFeedback.trim() || campusSelected === "-1" || setorSelected === "-1" || tipo === "-1") {
                                     toast.error("Preencha todos os campos!");
-                                } else {
+                                }
+                                else {
                                     const dataFeedback = new Date().toISOString();
-                                    try {
-                                        creatingFeedback({
-                                            texto: textoFeedback,
-                                            tipo: tipo,
-                                            data: dataFeedback,
-                                            idsetor: parseInt(setorSelected, 10),
-                                            idUsuario: userInfo?.id
-                                        })
-                                    }
-                                    catch (error) {
-                                        console.error("Erro ao criar feedback. Por favor, tente novamente.");
-                                    }
+                                    creatingFeedback({
+                                        texto: textoFeedback,
+                                        tipo: tipo,
+                                        data: dataFeedback,
+                                        idsetor: parseInt(setorSelected, 10),
+                                        idusuario: userInfo?.id
+                                    });
                                 }
                             }}
                         >

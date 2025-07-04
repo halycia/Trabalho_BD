@@ -1,8 +1,8 @@
 export interface Feedback {
     id: number,
-    data: Date | string, 
+    data: Date | string,
     texto: string,
     tipo: string,
     idsetor: number,
-    idUsuario: number;
+    idusuario: number;
 }
