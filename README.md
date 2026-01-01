@@ -95,21 +95,10 @@ O sistema utiliza **class-validator** e **class-transformer** para validação d
 
 ###  1. Configuração do Banco de Dados
 
-#### Passo 1: Criar banco PostgreSQL (utilizando pgAdmin)
-```sql
-CREATE DATABASE avaliaru;
-```
-
-#### Passo 2: Executar scripts SQL
-```bash
-cd sql
-psql -U seu_usuario -d avaliaru -f script.sql
-```
-#### Passo 3 (opcional): executar o seeding do banco de dados para simular dados pré-existentes
-```bash
-cd sql
-psql -U seu_usuario -d avaliaru -f seeding.sql
-```
+#### Passo 1: Criar banco no PostgreSQL com o nome de 'avaliaru'
+#### Passo 2: Executar scripts SQL presentes em 'sql/schema.sql'
+#### Passo 3: Executar o script da view presente em 'sql/view.sql'
+#### Passo 4 (opcional): executar o seeding do banco de dados para simular dados pré-existentes, presentes em 'sql/seeding.sql'
 
 ###  2. Configuração do Backend (API)
 
@@ -140,7 +129,7 @@ npm run dev
 
 ##  Como o Frontend consome a API 
 
-O frontend Next.js se comunica com a API NestJS através de requisições HTTP usando **Axios**. Esta comunicação segue o padrão REST e utiliza autenticação JWT. O frontend utiliza os endpoints da API, e recebe a resposta para mostrar na interface web (métodos GET), ou envia requisições com argumentos coletados na interface para alterar o banco de dados (métodos POST, PUT e DELETE). 
+O frontend Next.js se comunica com a API NestJS através de requisições HTTP usando **Axios**. Esta comunicação segue o padrão REST e utiliza autenticação JWT. O frontend utiliza os endpoints da API, e recebe a resposta para mostrar na interface web (métodos GET), ou envia requisições com argumentos coletados na interface para alterar o banco de dados (métodos POST, PUT e DELETE).  
 
 ### Fluxo de Autenticação
 
