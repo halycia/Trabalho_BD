@@ -12,39 +12,56 @@ import { User } from './user.entity';
 export class UserService {
   constructor(private db: DatabaseService) { }
 
-  async findUserByEmail(email: string): Promise<User | null> {
+  async findUserByEmail(email: string): Promise<User> {
     const result = await this.db.query(
       'SELECT * FROM usuario WHERE email = $1',
       [email],
     );
-    return result.rows[0] as User ?? null;
+    const user_found = result.rows[0];
+    if (!user_found) {
+      throw new NotFoundException (`Usuário com email ${email} não encontrado`)
+    }
+    return result.rows[0] as User;
   }
 
-  async findUserById(id: number): Promise<User | null> {
+  async findUserById(id: number): Promise<User> {
     const result = await this.db.query(
       'SELECT * FROM usuario WHERE id = $1',
       [id],
     );
-    return result.rows[0] as User ?? null;
+    const user_found = result.rows[0];
+    if (!user_found) {
+      throw new NotFoundException (`Usuário com id ${id} não encontrado`)
+    }
+    return result.rows[0] as User;
   }
 
-  async findUserByUsername(username: string): Promise<User | null> {
+  async findUserByUsername(username: string): Promise<User> {
     const result = await this.db.query(
       'SELECT * FROM usuario WHERE username = $1',
       [username],
     );
-    return result.rows[0] as User ?? null;
+    const user_found = result.rows[0];
+    if (!user_found) {
+      throw new NotFoundException (`Usuário com username ${username} não encontrado`)
+    };
+    return result.rows[0] as User;
   }
 
   async createUser(novoUsuario: CreateUserDto) {
+    try {
     const UserEmail = await this.findUserByEmail(novoUsuario.email);
-    if (UserEmail) {
-      throw new ConflictException('Email já cadastrado');
+    } catch (error) { 
+      if (error instanceof NotFoundException) {
+      }
     }
+    try {
+      const UserUsername = await this.findUserByUsername(novoUsuario.username);
 
-    const UserUsername = await this.findUserByUsername(novoUsuario.username);
-    if (UserUsername) {
-      throw new ConflictException('Nome de usuário em uso');
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+      }
+      
     }
 
     const result = await this.db.query(
@@ -100,9 +117,6 @@ export class UserService {
 
   async deleteUser(id: number) {
     const deletingUser = await this.findUserById(id);
-    if (!deletingUser) {
-      throw new NotFoundException(`Usuário com id ${id} não encontrado`);
-    }
     const result = await this.db.query(
       'DELETE FROM usuario WHERE id = $1',
       [id],

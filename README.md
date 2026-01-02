@@ -125,7 +125,7 @@ cd frontend
 npm install
 npm run dev
 ```
-- Obs: o backend deve ser inicializado antes do frontend
+- Obs: o backend deve ser inicializado antes do frontend, e o banco de dados deve estar rodando 
 
 ##  Como o Frontend consome a API 
 

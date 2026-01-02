@@ -10,10 +10,6 @@ import { Campus } from './campus.entity';
 
 @ApiTags('Campus')
 @Controller('campus')
-/**
- * ⚠️ AVISO: Controller para fins educacionais.
- * Dados de campus fictícios para demonstração do sistema.
- */
 export class CampusController {
   constructor(private readonly campusService: CampusService) { }
 

@@ -20,8 +20,8 @@ export class AvaliacaoController {
   constructor(private readonly avaliacaoService: AvaliacaoService) { }
 
   @ApiOperation({ summary: 'Criar nova avaliação' })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Avaliação criada com sucesso',
   })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
@@ -32,8 +32,8 @@ export class AvaliacaoController {
   }
 
   @ApiOperation({ summary: 'Listar todas as avaliações' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Lista de avaliações retornada com sucesso',
   })
   @Get()
@@ -43,8 +43,8 @@ export class AvaliacaoController {
 
   @ApiOperation({ summary: 'Buscar avaliações de um usuário' })
   @ApiParam({ name: 'id', description: 'ID do usuário', type: 'number' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Avaliações do usuário encontradas',
   })
   @Get('user/:id')
@@ -54,8 +54,8 @@ export class AvaliacaoController {
 
   @ApiOperation({ summary: 'Buscar avaliação por ID' })
   @ApiParam({ name: 'id', description: 'ID da avaliação', type: 'number' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Avaliação encontrada',
   })
   @ApiResponse({ status: 404, description: 'Avaliação não encontrada' })
@@ -66,8 +66,8 @@ export class AvaliacaoController {
 
   @ApiOperation({ summary: 'Buscar avaliações de um prato com nome do usuário' })
   @ApiParam({ name: 'id', description: 'ID do prato', type: 'number' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Avaliações do prato encontradas',
   })
   @Get('prato/:id')
@@ -77,8 +77,8 @@ export class AvaliacaoController {
 
   @ApiOperation({ summary: 'Atualizar avaliação' })
   @ApiParam({ name: 'id', description: 'ID da avaliação', type: 'number' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Avaliação atualizada com sucesso',
   })
   @ApiResponse({ status: 404, description: 'Avaliação não encontrada' })
@@ -93,8 +93,8 @@ export class AvaliacaoController {
 
   @ApiOperation({ summary: 'Deletar avaliação' })
   @ApiParam({ name: 'id', description: 'ID da avaliação', type: 'number' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Avaliação deletada com sucesso',
   })
   @ApiResponse({ status: 404, description: 'Avaliação não encontrada' })

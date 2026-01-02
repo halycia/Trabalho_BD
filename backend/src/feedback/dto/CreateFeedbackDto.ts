@@ -4,6 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateFeedbackDto {
 
   @ApiProperty({
+    required: true,
     description: 'Data do feedback',
     example: '2024-01-15T16:00:00Z',
   })
@@ -11,16 +12,18 @@ export class CreateFeedbackDto {
   data: Date | string;
 
   @ApiProperty({
+    required: true,
     description: 'Texto do feedback',
-    example: 'Sugestão para melhorar o atendimento no balcão.',
+    example: 'Precisa melhorar o atendimento no balcão.',
   })
   @IsNotEmpty()
   @IsString()
   texto: string;
 
   @ApiProperty({
+    required: true,
     description: 'Tipo do feedback',
-    example: 'Sugestão',
+    example: 'Reclamação',
     enum: ['Sugestão', 'Reclamação', 'Elogio', 'Dúvida'],
   })
   @IsNotEmpty()
@@ -28,6 +31,7 @@ export class CreateFeedbackDto {
   tipo: string;
 
   @ApiProperty({
+    required: true,
     description: 'ID do setor relacionado ao feedback',
     example: 1,
   })
@@ -36,6 +40,7 @@ export class CreateFeedbackDto {
   id_setor: number;
 
   @ApiProperty({
+    required: true,
     description: 'ID do usuário que enviou o feedback',
     example: 1,
   })

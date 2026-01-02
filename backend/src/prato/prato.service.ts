@@ -1,5 +1,6 @@
 import {
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { Prato } from './prato.entity';
@@ -8,12 +9,16 @@ import { infoPrato } from './infoPrato.entity';
 export class PratoService {
   constructor(private db: DatabaseService) { }
 
-  async findOnePrato(id: number): Promise<Prato | null> {
+  async findOnePrato(id: number): Promise<Prato> {
     const result = await this.db.query(
       'SELECT * FROM prato WHERE id = $1',
       [id],
     );
-    return result.rows[0] as Prato ?? null;
+    const prato_found = result.rows[0];
+    if (!prato_found) {
+      throw new NotFoundException(`Prato com id ${id} não encontrado`);
+    }
+    return prato_found as Prato;
   }
   async findAllPratos(): Promise<Prato[]> {
     const result = await this.db.query('SELECT * FROM prato');
@@ -30,19 +35,22 @@ export class PratoService {
       icone: prato.icone ? prato.icone.toString('base64') : null,
     }));
   }
-  async findInfoPratoById(id: number): Promise<infoPrato | null> {
+  async findInfoPratoById(id: number): Promise<infoPrato> {
     const result = await this.db.query(
       'SELECT * FROM media_prato WHERE id = $1',
       [id],
     );
     const prato = result.rows[0];
+    if (!prato) {
+      throw new NotFoundException(`Prato com id ${id} não encontrado`);
+    }
     return {
     ...prato,
     icone: prato.icone ? prato.icone.toString('base64') : null,
     } as infoPrato;
   }
 
-async findAllInfoPratoById(id: number): Promise<infoPrato | null> {
+async findAllInfoPratoById(id: number): Promise<infoPrato> {
   const result = await this.db.query(
     `
     SELECT 
@@ -64,6 +72,10 @@ async findAllInfoPratoById(id: number): Promise<infoPrato | null> {
     [id]
   );
 
-  return result.rows[0] || null;
+  const prato = result.rows[0];
+  if (!prato) {
+    throw new NotFoundException(`Prato com id ${id} não encontrado`);
+  }
+  return prato;
 }
 }

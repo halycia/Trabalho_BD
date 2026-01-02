@@ -13,7 +13,7 @@ export class UpdateUserDto {
 
   @ApiProperty({
     description: 'Nome de usuário único',
-    example: 'joao_silva',
+    example: 'joao_silva_123',
     required: false,
   })
   @IsOptional()

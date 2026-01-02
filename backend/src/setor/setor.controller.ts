@@ -10,10 +10,6 @@ import { Setor } from './setor.entity';
 
 @ApiTags('Setores')
 @Controller('setor')
-/**
- * ⚠️ AVISO: Controller para fins educacionais.
- * Dados de setores fictícios para demonstração do sistema.
- */
 export class SetorController {
   constructor(private readonly setorService: SetorService) { }
 

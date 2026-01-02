@@ -50,7 +50,7 @@ export class UserController {
   })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   @Get('email/:email')
-  async findByEmail(@Param('email') email: string): Promise<User | null> {
+  async findByEmail(@Param('email') email: string): Promise<User> {
     return this.userService.findUserByEmail(email);
   }
 
@@ -62,7 +62,7 @@ export class UserController {
   })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   @Get('username/:username')
-  async findByUsername(@Param('username') username: string): Promise<User | null> {
+  async findByUsername(@Param('username') username: string): Promise<User> {
     return this.userService.findUserByUsername(username);
   }
 
@@ -74,7 +74,7 @@ export class UserController {
   })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   @Get(':id')
-  async findUserById(@Param('id', ParseIntPipe) id: number): Promise<User | null> {
+  async findUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findUserById(id);
   }
 

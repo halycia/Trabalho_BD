@@ -14,8 +14,7 @@ async function bootstrap() {
       ⚠️ **AVISO**: Esta API foi desenvolvida exclusivamente para fins educacionais 
       como projeto acadêmico da disciplina de Banco de Dados. Os dados de avaliação são fictícios e não representam opiniões reais
       
-      **Tecnologias**: NestJS, PostgreSQL, JWT, Swagger
-      **GitHub do projeto**: https://github.com/halycia/Trabalho_BD
+      GitHub do projeto: https://github.com/halycia/Trabalho_BD
 
     `)
     .setVersion('1.0')

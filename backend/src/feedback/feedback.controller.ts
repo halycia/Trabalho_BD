@@ -47,6 +47,9 @@ export class FeedbackController {
     status: 200,
     description: 'Feedbacks do usuário encontrados',
   })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Usuário não encontrado' })
   @Get('user/:idusuario')
   async findFeedbacksFromUser(@Param('idusuario', ParseIntPipe) idusuario: number): Promise<Feedback[]> {
     return await this.feedbackService.findAllFeedbacksFromUser(idusuario);
@@ -58,9 +61,11 @@ export class FeedbackController {
     status: 200,
     description: 'Feedback encontrado',
   })
-  @ApiResponse({ status: 404, description: 'Feedback não encontrado' })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Feedback não encontrado' })
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Feedback | null> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Feedback> {
     return this.feedbackService.findOne(id);
   }
 
