@@ -22,7 +22,7 @@ export class SetorService {
     return result.rows as Setor[];
   }
   async findSetoresByCampus(idCampus: number): Promise<Setor[]> {
-    const campusExists = await this.campusService.findOneCampus(idCampus);
+    await this.campusService.findOneCampus(idCampus);
     const result = await this.db.query(
       'SELECT * FROM setor WHERE id_campus = $1',
       [idCampus],

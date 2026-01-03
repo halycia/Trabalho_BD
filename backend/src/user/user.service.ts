@@ -48,35 +48,42 @@ export class UserService {
     return result.rows[0] as User;
   }
 
-  async createUser(novoUsuario: CreateUserDto) {
-    try {
-    const UserEmail = await this.findUserByEmail(novoUsuario.email);
-    } catch (error) { 
-      if (error instanceof NotFoundException) {
-      }
-    }
-    try {
-      const UserUsername = await this.findUserByUsername(novoUsuario.username);
-
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-      }
-      
-    }
-
-    const result = await this.db.query(
-      `INSERT INTO usuario (email, username, nome, senha)
-       VALUES ($1, $2, $3, $4)`,
-      [novoUsuario.email, novoUsuario.username, novoUsuario.nome,
-      novoUsuario.senha],
-    );
-
-    return { message: "Usuário criado com sucesso" };
-  }
-
   async findAllUsers(): Promise<User[]> {
     const result = await this.db.query('SELECT * FROM usuario');
     return result.rows as User[];
+  }
+
+
+  async createUser(novoUsuario: CreateUserDto) {
+    try {
+      await this.findUserByEmail(novoUsuario.email);
+      throw new ConflictException('Email já está em uso');
+    } catch (error) {
+      if (!(error instanceof NotFoundException)) {
+        throw error;
+      }
+    }
+    
+    try {
+      await this.findUserByUsername(novoUsuario.username);
+      throw new ConflictException('Nome de usuário já está em uso');
+    } catch (error) {
+      if (!(error instanceof NotFoundException)) {
+        throw error;
+      }
+      
+    }
+    const result = await this.db.query(
+      `INSERT INTO usuario (email, username, nome, senha)
+       VALUES ($1, $2, $3, $4)`,
+      [
+        novoUsuario.email, 
+        novoUsuario.username, 
+        novoUsuario.nome,
+        novoUsuario.senha
+      ]
+    );
+    return { message: "Usuário criado com sucesso" };
   }
 
 
@@ -84,35 +91,37 @@ export class UserService {
     const localUser = await this.findUserById(id);
 
     if (updates.email && updates.email !== localUser.email) {
-      const UserEmail = await this.findUserByEmail(updates.email);
-      if (UserEmail) {
-        throw new ConflictException('Email já cadastrado');
+      try {
+        await this.findUserByEmail(updates.email);
+        throw new ConflictException('Email já está em uso');
+      } catch (error) {
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       }
     }
-    if (updates.username && updates.username !== localUser.username) {
-      const UserUsername = await this.findUserByUsername(updates.username);
-      if (UserUsername) {
-        throw new ConflictException('Nome de usuário em uso');
-      }
-    }
-    try {
-      const result = await this.db.query(
-        `UPDATE usuario 
-        SET nome=$1, email=$2,
-        username=$3, senha=$4
-        WHERE id = $5 `, [
-        updates.nome ?? localUser.nome,
-        updates.email ?? localUser.email,
-        updates.username ?? localUser.username,
-        updates.senha ?? localUser.senha,
-        id
-      ]
-      );
 
-      return { message: "Usuário atualizado com sucesso " };
-    } catch (error: any) {
-      throw new InternalServerErrorException('Atualização falhou');
+    if (updates.username && updates.username !== localUser.username) {
+      try {
+        await this.findUserByUsername(updates.username);
+        throw new ConflictException('Nome de usuário já está em uso');
+      } catch (error) {
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
+      }
     }
+    const result = await this.db.query(
+        `UPDATE usuario SET nome=$1, email=$2, username=$3, senha=$4 WHERE id = $5`,
+        [
+          updates.nome ?? localUser.nome,
+          updates.email ?? localUser.email,
+          updates.username ?? localUser.username,
+          updates.senha ?? localUser.senha,
+          id
+        ]
+      );
+      return { message: "Usuário atualizado com sucesso " };
   }
 
   async deleteUser(id: number) {

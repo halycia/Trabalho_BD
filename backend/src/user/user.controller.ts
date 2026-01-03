@@ -7,104 +7,90 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Put,
+  ForbiddenException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { UpdateUserDto } from './dto/UpdateUserDto';
 import { User } from './user.entity';
+import { Public } from '../auth/decorators/isPublic.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { UserPayload } from '../auth/types/UserPayload';
+import {
+  CreateUserDocs,
+  GetAllUsersDocs,
+  GetUserByEmailDocs,
+  GetUserByUsernameDocs,
+  GetUserByIdDocs,
+  UpdateUserDocs,
+  DeleteUserDocs,
+} from './user.swagger';
 
 @ApiTags('Usuários')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @ApiOperation({ summary: 'Criar novo usuário' })
-  @ApiResponse({
-    status: 201,
-    description: 'Usuário criado com sucesso',
-    type: CreateUserDto,
-  })
-  @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  @CreateUserDocs()
+  @Public()
   @Post()
   async create(@Body() dto: CreateUserDto) {
     return this.userService.createUser(dto);
   }
 
-  @ApiOperation({ summary: 'Listar todos os usuários' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de usuários retornada com sucesso',
-  })
+  @GetAllUsersDocs()
   @Get()
   async findAll(): Promise<User[]> {
     return await this.userService.findAllUsers();
   }
 
-  @ApiOperation({ summary: 'Buscar usuário por email' })
-  @ApiParam({ name: 'email', description: 'Email do usuário' })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuário encontrado',
-  })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  @GetUserByEmailDocs()
   @Get('email/:email')
   async findByEmail(@Param('email') email: string): Promise<User> {
     return this.userService.findUserByEmail(email);
   }
 
-  @ApiOperation({ summary: 'Buscar usuário por username' })
-  @ApiParam({ name: 'username', description: 'Username do usuário' })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuário encontrado',
-  })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  @GetUserByUsernameDocs()
   @Get('username/:username')
   async findByUsername(@Param('username') username: string): Promise<User> {
     return this.userService.findUserByUsername(username);
   }
 
-  @ApiOperation({ summary: 'Buscar usuário por ID' })
-  @ApiParam({ name: 'id', description: 'ID do usuário', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuário encontrado',
-  })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  @GetUserByIdDocs()
+  @Get('profile')
+  async getCurrentUserProfile(@CurrentUser() currentUser: UserPayload): Promise<User> {
+    return this.userService.findUserById(parseInt(currentUser.sub));
+  }
+
+  @GetUserByIdDocs()
   @Get(':id')
   async findUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findUserById(id);
   }
 
-  @ApiOperation({ summary: 'Atualizar usuário' })
-  @ApiParam({ name: 'id', description: 'ID do usuário', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuário atualizado com sucesso',
-  })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
-  @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  @ApiBearerAuth('JWT-auth')
+  @UpdateUserDocs()
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateUserDto,
+    @CurrentUser() currentUser: UserPayload,
   ) {
+    if (id !== parseInt(currentUser.sub)) {
+      throw new ForbiddenException('Você só pode atualizar seu próprio perfil');
+    }
     return this.userService.updateUser(id, dto);
   }
 
-  @ApiOperation({ summary: 'Deletar usuário' })
-  @ApiParam({ name: 'id', description: 'ID do usuário', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuário deletado com sucesso',
-  })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
-  @ApiBearerAuth('JWT-auth')
+  @DeleteUserDocs()
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() currentUser: UserPayload,
+  ) {
+    if (id !== parseInt(currentUser.sub)) {
+      throw new ForbiddenException('Você só pode deletar sua própria conta');
+    }
     return this.userService.deleteUser(id);
   }
 }

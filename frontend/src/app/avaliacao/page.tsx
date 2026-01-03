@@ -88,7 +88,8 @@ export default function AvaliacaoPage() {
     useEffect(() => {
         const findPratosAval = async () => {
             for (const avaliacao of avaliacoes) {
-                const response = await axios.get(`http://localhost:3000/prato/id/${avaliacao.id_prato}`);
+                console.log('Buscando prato para avaliação ID:', avaliacao.id);
+                const response = await axios.get(`http://localhost:3000/prato/${avaliacao.id_prato}`);
                 const prato = response.data as Prato;
                 setPratoAvaliacoes(prev => new Map(prev).set(avaliacao.id, prato));
 

@@ -3,44 +3,39 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { SetorService } from './setor.service';
 import { Setor } from './setor.entity';
+import { Public } from '../auth/decorators/isPublic.decorator';
+import {
+  GetAllSetoresDocs,
+  GetSetorByIdDocs,
+  GetSetoresByCampusDocs,
+} from './setor.swagger';
 
 @ApiTags('Setores')
 @Controller('setor')
 export class SetorController {
   constructor(private readonly setorService: SetorService) { }
 
-  @ApiOperation({ summary: 'Listar todos os setores' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de setores retornada com sucesso',
-  })
+  @GetAllSetoresDocs()
+  @Public()
   @Get()
   async findAll(): Promise<Setor[]> {
     return await this.setorService.findAllSetores();
   }
 
-  @ApiOperation({ summary: 'Buscar setor por ID' })
-  @ApiParam({ name: 'id', description: 'ID do setor', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Setor encontrado',
-  })
-  @ApiResponse({ status: 404, description: 'Setor não encontrado' })
+  @GetSetorByIdDocs()
+  @Public()
   @Get(':id')
   async findOneSetor(@Param('id', ParseIntPipe) id: number): Promise<Setor | null> {
     return this.setorService.findOneSetor(id);
   }
 
-  @ApiOperation({ summary: 'Buscar setores por campus' })
-  @ApiParam({ name: 'idCampus', description: 'ID do campus', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Setores do campus encontrados',
-  })
+  @GetSetoresByCampusDocs()
+  @Public()
   @Get('campus/:idCampus')
   async findSetoresByCampus(@Param('idCampus') idCampus: number): Promise<Setor[]> {
     return this.setorService.findSetoresByCampus(idCampus);

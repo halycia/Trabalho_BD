@@ -3,10 +3,12 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CampusService } from './campus.service';
 import { Campus } from './campus.entity';
+import { Public } from '../auth/decorators/isPublic.decorator';
 
 @ApiTags('Campus')
 @Controller('campus')
@@ -18,6 +20,7 @@ export class CampusController {
     status: 200,
     description: 'Lista de campus retornada com sucesso',
   })
+  @Public()
   @Get()
   async findAll(): Promise<Campus[]> {
     return await this.campusService.findAllCampus();
@@ -30,6 +33,7 @@ export class CampusController {
     description: 'Campus encontrado',
   })
   @ApiResponse({ status: 404, description: 'Campus não encontrado' })
+  @Public()
   @Get(':id')
   async findOneCampus(@Param('id', ParseIntPipe) id: number): Promise<Campus | null> {
     return this.campusService.findOneCampus(id);

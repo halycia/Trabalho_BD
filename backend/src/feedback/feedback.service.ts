@@ -1,12 +1,11 @@
 import {
   Injectable,
-  ConflictException,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { UserService } from 'src/user/user.service';
 import { SetorService } from 'src/setor/setor.service';
-import { CampusService } from 'src/campus/campus.service';
 import { CreateFeedbackDto } from './dto/CreateFeedbackDto';
 import { UpdateFeedbackDto } from './dto/UpdateFeedbackDto';
 import { Feedback } from './feedback.entity';
@@ -46,11 +45,16 @@ export class FeedbackService {
     await this.userService.findUserById(newFeedback.id_usuario);
     await this.setorService.findOneSetor(newFeedback.id_setor);    
     const result = await this.db.query(
-      `INSERT INTO Feedback (data, texto, tipo, id_setor, id_usuario)
-              VALUES ($1, $2, $3, $4, $5)`,
-      [newFeedback.data, newFeedback.texto, newFeedback.tipo,
-      newFeedback.id_setor, newFeedback.id_usuario],
-    );
+          `INSERT INTO Feedback (data, texto, tipo, id_setor, id_usuario)
+            VALUES ($1, $2, $3, $4, $5)`,
+          [
+            newFeedback.data, 
+            newFeedback.texto, 
+            newFeedback.tipo,
+            newFeedback.id_setor, 
+            newFeedback.id_usuario
+          ]
+      );
     return { message: 'Feedback criado com sucesso' };
   }
 
@@ -62,8 +66,13 @@ export class FeedbackService {
     const result = await this.db.query(
       `UPDATE feedback SET data = $1, texto = $2, tipo = $3, id_setor = $4, id_usuario = $5
               WHERE id = $6`,
-      [editedFeedback.data, editedFeedback.texto, editedFeedback.tipo,
-      editedFeedback.id_setor, editedFeedback.id_usuario, id],
+      [
+        editedFeedback.data, 
+        editedFeedback.texto, 
+        editedFeedback.tipo,
+        editedFeedback.id_setor, 
+        editedFeedback.id_usuario, 
+        id]
     );
     return { message: 'Feedback editado com sucesso' };
   }

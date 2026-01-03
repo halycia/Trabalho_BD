@@ -3,58 +3,55 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { PratoService } from './prato.service';
 import { Prato } from './prato.entity';
 import { infoPrato } from './infoPrato.entity'
+import { Public } from '../auth/decorators/isPublic.decorator';
+import { AuthGuard } from '../auth/auth.guard';
+import {
+  GetAllPratosDocs,
+  GetPratoByIdDocs,
+  GetInfoPratosDocs,
+  GetInfoPratoByIdDocs
+} from './prato.swagger';
 
 @ApiTags('Pratos')
 @Controller('prato')
 export class PratoController {
   constructor(private readonly pratoService: PratoService) { }
 
-  @ApiOperation({ summary: 'Listar todos os pratos' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de pratos retornada com sucesso',
-  })
+  @Public() 
   @Get()
   async findAll(): Promise<Prato[]> {
     return await this.pratoService.findAllPratos();
   }
 
-  @ApiOperation({ summary: 'Buscar prato por ID' })
-  @ApiParam({ name: 'id', description: 'ID do prato', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Prato encontrado',
-  })
-  @ApiResponse({ status: 404, description: 'Prato não encontrado' })
-  @Get('id/:id')
+  @GetInfoPratosDocs()
+  @Public()
+  @Get('info')
+  async findInfoPrato(): Promise<infoPrato[]> {
+    console.log('Chamando findInfoPrato no PratoController');
+    return this.pratoService.findInfoPrato();
+  }
+
+  @GetInfoPratoByIdDocs()
+  @Public()
+  @Get('info/:id')
+  async findAllInfoPratoById(@Param('id', ParseIntPipe) id: number): Promise<infoPrato | null> {
+    console.log('Chamando findInfoPratoById no PratoController com id:', id);
+    return this.pratoService.findInfoPratoById(id);
+  }
+
+  @GetPratoByIdDocs()
+  @GetPratoByIdDocs()
+  @Public() 
+  @Get(':id')
   async findOnePrato(@Param('id', ParseIntPipe) id: number): Promise<Prato | null> {
     return this.pratoService.findOnePrato(id);
   }
 
-  @ApiOperation({ summary: 'Listar informações detalhadas dos pratos' })
-  @ApiResponse({
-    status: 200,
-    description: 'Informações detalhadas dos pratos retornadas com sucesso',
-  })
-  @Get('info')
-  async findInfoPrato(): Promise<infoPrato[]> {
-    return this.pratoService.findInfoPrato();
-  }
 
-  @ApiOperation({ summary: 'Buscar informações detalhadas de um prato' })
-  @ApiParam({ name: 'id', description: 'ID do prato', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Informações detalhadas do prato encontradas',
-  })
-  @ApiResponse({ status: 404, description: 'Prato não encontrado' })
-  @Get('info/:id')
-  async findAllInfoPratoById(@Param('id', ParseIntPipe) id: number): Promise<infoPrato | null> {
-    return this.pratoService.findInfoPratoById(id);
-  }
 }

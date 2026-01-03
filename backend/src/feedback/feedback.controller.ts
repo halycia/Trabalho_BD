@@ -7,92 +7,91 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
+  UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateFeedbackDto } from './dto/CreateFeedbackDto';
 import { UpdateFeedbackDto } from './dto/UpdateFeedbackDto';
 import { Feedback } from './feedback.entity';
 import { FeedbackService } from './feedback.service';
-
+import {
+  CreateFeedbackDocs,
+  GetAllFeedbacksDocs,
+  GetFeedbacksByUserDocs,
+  GetFeedbackByIdDocs,
+  UpdateFeedbackDocs,
+  DeleteFeedbackDocs,
+} from './feedback.swagger';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { UserPayload } from '../auth/types/UserPayload';
+import { Public } from 'src/auth/decorators/isPublic.decorator';
 @ApiTags('Feedback')
 @Controller('feedback')
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) { }
 
-  @ApiOperation({ summary: 'Criar novo feedback' })
-  @ApiResponse({
-    status: 201,
-    description: 'Feedback criado com sucesso',
-  })
-  @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  @ApiBearerAuth('JWT-auth')
+  @CreateFeedbackDocs()
   @Post()
-  async create(@Body() newFeedback: CreateFeedbackDto) {
+  async create(
+    @Body() newFeedback: CreateFeedbackDto,
+    @CurrentUser() currentUser: UserPayload,
+  ) {
+    if (newFeedback.id_usuario !== parseInt(currentUser.sub)) {
+      throw new ForbiddenException('Você só pode criar feedback para si mesmo');
+    }
     return this.feedbackService.createFeedback(newFeedback);
   }
 
-  @ApiOperation({ summary: 'Listar todos os feedbacks' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de feedbacks retornada com sucesso',
-  })
+  @GetAllFeedbacksDocs()
   @Get()
   async findAllFeedbacks(): Promise<Feedback[]> {
     return this.feedbackService.findAllFeedbacks();
   }
 
-  @ApiOperation({ summary: 'Buscar feedbacks de um usuário' })
-  @ApiParam({ name: 'idusuario', description: 'ID do usuário', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Feedbacks do usuário encontrados',
-  })
-  @ApiResponse({ 
-    status: 404, 
-    description: 'Usuário não encontrado' })
+  @GetFeedbacksByUserDocs()
   @Get('user/:idusuario')
   async findFeedbacksFromUser(@Param('idusuario', ParseIntPipe) idusuario: number): Promise<Feedback[]> {
     return await this.feedbackService.findAllFeedbacksFromUser(idusuario);
   }
 
-  @ApiOperation({ summary: 'Buscar feedback por ID' })
-  @ApiParam({ name: 'id', description: 'ID do feedback', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Feedback encontrado',
-  })
-  @ApiResponse({ 
-    status: 404, 
-    description: 'Feedback não encontrado' })
+  @GetFeedbackByIdDocs()
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Feedback> {
     return this.feedbackService.findOne(id);
   }
 
-  @ApiOperation({ summary: 'Atualizar feedback' })
-  @ApiParam({ name: 'id', description: 'ID do feedback', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Feedback atualizado com sucesso',
-  })
-  @ApiResponse({ status: 404, description: 'Feedback não encontrado' })
-  @ApiBearerAuth('JWT-auth')
+  @UpdateFeedbackDocs()
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() editedFeedback: UpdateFeedbackDto,
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() editedFeedback: UpdateFeedbackDto,
+    @CurrentUser() currentUser: UserPayload,
   ) {
+    const feedback = await this.feedbackService.findOne(id);
+    if (!feedback) {
+      throw new ForbiddenException('Feedback não encontrado');
+    }
+    if (feedback.id_usuario !== parseInt(currentUser.sub)) {
+      throw new ForbiddenException('Você só pode editar seus próprios feedbacks');
+    }
     return this.feedbackService.updateFeedback(id, editedFeedback);
   }
 
-  @ApiOperation({ summary: 'Deletar feedback' })
-  @ApiParam({ name: 'id', description: 'ID do feedback', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Feedback deletado com sucesso',
-  })
-  @ApiResponse({ status: 404, description: 'Feedback não encontrado' })
-  @ApiBearerAuth('JWT-auth')
+  @DeleteFeedbackDocs()
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() currentUser: UserPayload,
+  ) {
+    const feedback = await this.feedbackService.findOne(id);
+    if (!feedback) {
+      throw new ForbiddenException('Feedback não encontrado');
+    }
+    if (feedback.id_usuario !== parseInt(currentUser.sub)) {
+      throw new ForbiddenException('Você só pode deletar seus próprios feedbacks');
+    }
     return this.feedbackService.deleteFeedback(id);
   }
 }

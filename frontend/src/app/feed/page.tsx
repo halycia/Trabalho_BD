@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import HeaderLogado from '../../components/headers/logado';
 import HeaderDeslogado from '@/components/headers/deslogado';

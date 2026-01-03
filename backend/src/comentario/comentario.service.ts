@@ -1,6 +1,5 @@
 import {
   Injectable,
-  ConflictException,
   NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
@@ -19,23 +18,18 @@ export class ComentarioService {
   async createComentario(createComentarioDto: CreateComentarioDto) {
     await this.userService.findUserById(createComentarioDto.id_usuario);    
     await this.avaliacaoService.findAvaliacaoById(createComentarioDto.id_avaliacao);
-
-    const result = await this.db.query(
+      const result = await this.db.query(
       'INSERT INTO comentario (texto, data, id_avaliacao, id_usuario) VALUES ($1, $2, $3, $4)',
       [
         createComentarioDto.texto,
         createComentarioDto.data,
         createComentarioDto.id_avaliacao,
         createComentarioDto.id_usuario,
-      ],
+      ]
     );
     return { message: "Comentário criado com sucesso!" };
   }
 
-  async findAll() {
-    const result = await this.db.query('SELECT * FROM comentario');
-    return result.rows as Comentario[];
-  }
 
   async findOne(id: number) {
     const result = await this.db.query(
@@ -48,9 +42,21 @@ export class ComentarioService {
     return result.rows[0] as Comentario;
   }
 
+  async findComentariosFromAvaliacao(idAvaliacao: number): Promise<Comentario[]> {
+    const result = await this.db.query(
+      'SELECT * FROM comentario WHERE id_avaliacao = $1',
+      [idAvaliacao],
+    );
+    return result.rows as Comentario[];
+  }
+
+  async findAll() {
+    const result = await this.db.query('SELECT * FROM comentario');
+    return result.rows as Comentario[];
+  }
+
   async updateComentario(id: number, updateComentarioDto: UpdateComentarioDto) {
     const comentario = await this.findOne(id);
-
     const updatedComentario = {
       ...comentario,
       ...updateComentarioDto,
@@ -74,17 +80,9 @@ export class ComentarioService {
   async deleteComentario(id: number) {
     await this.findOne(id);
     const result = await this.db.query(
-      'DELETE FROM comentario WHERE id = $1',
-      [id],
+        'DELETE FROM comentario WHERE id = $1',
+        [id],
     );
     return {message:"Comentário excluído com sucesso!"};
-  }
-
-  async findComentariosFromAvaliacao(idAvaliacao: number): Promise<Comentario[]> {
-    const result = await this.db.query(
-      'SELECT * FROM comentario WHERE id_avaliacao = $1',
-      [idAvaliacao],
-    );
-    return result.rows as Comentario[];
   }
 }

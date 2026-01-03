@@ -7,100 +7,94 @@ import {
   Patch,
   Post,
   ParseIntPipe,
+  ForbiddenException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { AvaliacaoService } from './avaliacao.service';
 import { CreateAvaliacaoDto } from './dto/CreateAvaliacaoDto';
 import { UpdateAvaliacaoDto } from './dto/UpdateAvaliacaoDto';
 import { Avaliacao } from './avaliacao.entity';
+import { Public } from '../auth/decorators/isPublic.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { UserPayload } from '../auth/types/UserPayload';
+import {
+  CreateAvaliacaoDocs,
+  GetAllAvaliacoesDocs,
+  GetAvaliacaoByIdDocs,
+  GetAvaliacoesByUserDocs,
+  GetAvaliacoesByPratoDocs,
+  UpdateAvaliacaoDocs,
+  DeleteAvaliacaoDocs,
+} from './avaliacao.swagger';
 
 @ApiTags('Avaliações')
 @Controller('avaliacao')
 export class AvaliacaoController {
   constructor(private readonly avaliacaoService: AvaliacaoService) { }
 
-  @ApiOperation({ summary: 'Criar nova avaliação' })
-  @ApiResponse({
-    status: 201,
-    description: 'Avaliação criada com sucesso',
-  })
-  @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  @ApiBearerAuth('JWT-auth')
+  @CreateAvaliacaoDocs()
   @Post()
-  async create(@Body() dto: CreateAvaliacaoDto) {
+  async create(
+    @Body() dto: CreateAvaliacaoDto,
+    @CurrentUser() currentUser: UserPayload,
+  ) {
+    if (dto.id_usuario !== parseInt(currentUser.sub)) {
+      throw new ForbiddenException('Você só pode criar avaliações para si mesmo');
+    }
     return this.avaliacaoService.createAvaliacao(dto);
   }
 
-  @ApiOperation({ summary: 'Listar todas as avaliações' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de avaliações retornada com sucesso',
-  })
+  @GetAllAvaliacoesDocs()
+  @Public() 
   @Get()
   async findAll(): Promise<Avaliacao[]> {
     return await this.avaliacaoService.findAllAvaliacao();
   }
 
-  @ApiOperation({ summary: 'Buscar avaliações de um usuário' })
-  @ApiParam({ name: 'id', description: 'ID do usuário', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Avaliações do usuário encontradas',
-  })
+  @GetAvaliacoesByUserDocs()
+  @Public()
   @Get('user/:id')
   async findAvalsFromUser(@Param('id', ParseIntPipe) idUsuario: number): Promise<Avaliacao[]> {
     return this.avaliacaoService.findAvalsFromUser(idUsuario);
   }
 
-  @ApiOperation({ summary: 'Buscar avaliação por ID' })
-  @ApiParam({ name: 'id', description: 'ID da avaliação', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Avaliação encontrada',
-  })
-  @ApiResponse({ status: 404, description: 'Avaliação não encontrada' })
+  @GetAvaliacaoByIdDocs()
+  @Public()
   @Get(':id')
   async findById(@Param('id', ParseIntPipe) id: number): Promise<Avaliacao | null> {
     return this.avaliacaoService.findAvaliacaoById(id);
   }
 
-  @ApiOperation({ summary: 'Buscar avaliações de um prato com nome do usuário' })
-  @ApiParam({ name: 'id', description: 'ID do prato', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Avaliações do prato encontradas',
-  })
+  @GetAvaliacoesByPratoDocs()
+  @Public()
   @Get('prato/:id')
   async findAvalsFromPratoWithUserName(@Param('id', ParseIntPipe) idPrato: number): Promise<Avaliacao[]> {
     return this.avaliacaoService.findAvalsFromPratoWithUserName(idPrato);
   }
 
-  @ApiOperation({ summary: 'Atualizar avaliação' })
-  @ApiParam({ name: 'id', description: 'ID da avaliação', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Avaliação atualizada com sucesso',
-  })
-  @ApiResponse({ status: 404, description: 'Avaliação não encontrada' })
-  @ApiBearerAuth('JWT-auth')
+  @UpdateAvaliacaoDocs()
   @Patch(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateAvaliacaoDto,
+    @CurrentUser() currentUser: UserPayload,
   ) {
-    return this.avaliacaoService.updateAvaliacao(id, dto);
+    return this.avaliacaoService.updateAvaliacao(id, dto, parseInt(currentUser.sub));
   }
 
-  @ApiOperation({ summary: 'Deletar avaliação' })
-  @ApiParam({ name: 'id', description: 'ID da avaliação', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Avaliação deletada com sucesso',
-  })
-  @ApiResponse({ status: 404, description: 'Avaliação não encontrada' })
-  @ApiBearerAuth('JWT-auth')
+  @DeleteAvaliacaoDocs()
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() currentUser: UserPayload,
+  ) {
+    const avaliacao = await this.avaliacaoService.findAvaliacaoById(id);
+    if (!avaliacao) {
+      throw new ForbiddenException('Avaliação não encontrada');
+    }
+    if (avaliacao.id_usuario !== parseInt(currentUser.sub)) {
+      throw new ForbiddenException('Você só pode deletar suas próprias avaliações');
+    }
     return this.avaliacaoService.deleteAvaliacao(id);
   }
 }

@@ -125,8 +125,7 @@ cd frontend
 npm install
 npm run dev
 ```
-- Obs: o backend deve ser inicializado antes do frontend, e o banco de dados deve estar rodando 
-
+- Obs: o backend deve ser inicializado antes do frontend
 ##  Como o Frontend consome a API 
 
 O frontend Next.js se comunica com a API NestJS através de requisições HTTP usando **Axios**. Esta comunicação segue o padrão REST e utiliza autenticação JWT. O frontend utiliza os endpoints da API, e recebe a resposta para mostrar na interface web (métodos GET), ou envia requisições com argumentos coletados na interface para alterar o banco de dados (métodos POST, PUT e DELETE).  

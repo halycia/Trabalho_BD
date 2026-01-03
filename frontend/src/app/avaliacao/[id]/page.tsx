@@ -69,7 +69,7 @@ export default function singleAvalPage() {
             try {
                 if (avaliacao && avaliacao.id_usuario) {
                     const userResponse: User = (await axios.get(`http://localhost:3000/user/${avaliacao.id_usuario}`)).data;
-                    const pratoAvalResponse: Prato = (await axios.get(`http://localhost:3000/prato/id/${avaliacao.id_prato}`)).data;
+                    const pratoAvalResponse: Prato = (await axios.get(`http://localhost:3000/prato/${avaliacao.id_prato}`)).data;
                     setUserAval(userResponse);
                     setPratoAval(pratoAvalResponse);
                 }
