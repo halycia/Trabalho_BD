@@ -7,9 +7,6 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UseGuards,
-  UnauthorizedException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ComentarioService } from './comentario.service';
@@ -27,8 +24,6 @@ import {
   UpdateComentarioDocs,
   DeleteComentarioDocs,
 } from './comentario.swagger';
-import { AuthGuard } from '../auth/auth.guard';
-
 @ApiTags('Comentários')
 @Controller('comentario')
 export class ComentarioController {
@@ -40,10 +35,7 @@ export class ComentarioController {
     @Body() createComentarioDto: CreateComentarioDto,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    if (createComentarioDto.id_usuario !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode criar comentários para si mesmo');
-    }
-    return this.comentarioService.createComentario(createComentarioDto);
+    return this.comentarioService.createComentario(createComentarioDto, parseInt(currentUser.sub));
   }
 
   @GetAllComentariosDocs()
@@ -56,8 +48,8 @@ export class ComentarioController {
   @GetComentarioByIdDocs()
   @Public()
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Comentario> {
-    return this.comentarioService.findOne(id);
+  findOne(@Param('id', ParseIntPipe) idComentario: number): Promise<Comentario> {
+    return this.comentarioService.findOne(idComentario);
   }
 
   @GetComentariosByAvaliacaoDocs()
@@ -72,33 +64,19 @@ export class ComentarioController {
   @UpdateComentarioDocs()
   @Patch(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) idComentario:number,
     @Body() updateComentarioDto: UpdateComentarioDto,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    const comentario = await this.comentarioService.findOne(id);
-    if (!comentario) {
-      throw new ForbiddenException('Comentário não encontrado');
-    }
-    if (comentario.id_usuario !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode editar seus próprios comentários');
-    }
-    return this.comentarioService.updateComentario(id, updateComentarioDto);
+      return this.comentarioService.updateComentario(idComentario, updateComentarioDto, parseInt(currentUser.sub));
   }
 
   @DeleteComentarioDocs()
   @Delete(':id')
   async remove(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) idComentario: number,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    const comentario = await this.comentarioService.findOne(id);
-    if (!comentario) {
-      throw new ForbiddenException('Comentário não encontrado');
-    }
-    if (comentario.id_usuario !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode deletar seus próprios comentários');
-    }
-    return this.comentarioService.deleteComentario(id);
+    return this.comentarioService.deleteComentario(idComentario, parseInt(currentUser.sub));
   }
 }

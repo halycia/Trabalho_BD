@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { UserService } from 'src/user/user.service';
@@ -15,14 +16,14 @@ export class FeedbackService {
   userService = new UserService(this.db);
   setorService = new SetorService(this.db,);
 
-  async findOne(id: number): Promise<Feedback> {
+  async findOne(idFeedback: number): Promise<Feedback> {
     const result = await this.db.query(
       'SELECT * FROM feedback WHERE id = $1',
-      [id],
+      [idFeedback],
     );
     const feedback_found = result.rows[0];
     if (!feedback_found) {
-      throw new NotFoundException(`Feedback com id ${id} não encontrado`);
+      throw new NotFoundException(`Feedback com id ${idFeedback} não encontrado`);
     }
     return feedback_found as Feedback;
   }
@@ -32,19 +33,22 @@ export class FeedbackService {
     return result.rows as Feedback[];
   } 
   
-  async findAllFeedbacksFromUser(id: number): Promise<Feedback[]> {
-    await this.userService.findUserById(id);
+  async findAllFeedbacksFromUser(idUsuario: number): Promise<Feedback[]> {
+    await this.userService.findUserById(idUsuario);
     const result = await this.db.query(
       'SELECT * FROM feedback WHERE id_usuario = $1',
-      [id],
+      [idUsuario],
     );
     return result.rows as Feedback[];
   }
 
-  async createFeedback(newFeedback: CreateFeedbackDto) {
+  async createFeedback(newFeedback: CreateFeedbackDto, id_payload:number) {
     await this.userService.findUserById(newFeedback.id_usuario);
-    await this.setorService.findOneSetor(newFeedback.id_setor);    
-    const result = await this.db.query(
+    await this.setorService.findSetorById(newFeedback.id_setor);    
+    if (newFeedback.id_usuario !== id_payload) {
+      throw new ForbiddenException('Você só pode criar feedback para si mesmo');
+    }
+    await this.db.query(
           `INSERT INTO Feedback (data, texto, tipo, id_setor, id_usuario)
             VALUES ($1, $2, $3, $4, $5)`,
           [
@@ -58,12 +62,14 @@ export class FeedbackService {
     return { message: 'Feedback criado com sucesso' };
   }
 
-  async updateFeedback(id: number, editedFeedback: UpdateFeedbackDto) {
-    await this.findOne(id);
+  async updateFeedback(idFeedback: number, editedFeedback: UpdateFeedbackDto, id_payload:number) {
+    await this.findOne(idFeedback);
     await this.userService.findUserById(editedFeedback.id_usuario);
-    await this.setorService.findOneSetor(editedFeedback.id_setor);
-
-    const result = await this.db.query(
+    await this.setorService.findSetorById(editedFeedback.id_setor);
+    if (editedFeedback.id_usuario !== id_payload) {
+      throw new ForbiddenException('Você só pode editar seus próprios feedbacks');
+    }
+    await this.db.query(
       `UPDATE feedback SET data = $1, texto = $2, tipo = $3, id_setor = $4, id_usuario = $5
               WHERE id = $6`,
       [
@@ -72,16 +78,19 @@ export class FeedbackService {
         editedFeedback.tipo,
         editedFeedback.id_setor, 
         editedFeedback.id_usuario, 
-        id]
+        idFeedback]
     );
     return { message: 'Feedback editado com sucesso' };
   }
 
-  async deleteFeedback(id: number) {
-    await this.findOne(id);    
-    const result = await this.db.query(
+  async deleteFeedback(idFeedback: number, id_payload:number) {
+    const deletedFeedback = await this.findOne(idFeedback);    
+    if (deletedFeedback.id_usuario !== id_payload) {
+      throw new ForbiddenException('Você só pode deletar seus próprios feedbacks');
+    }
+    await this.db.query(
       'DELETE FROM feedback WHERE id = $1',
-      [id],
+      [idFeedback],
     );
     return { message: 'Feedback deletado com sucesso' };
   }

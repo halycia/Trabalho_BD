@@ -9,14 +9,14 @@ import { infoPrato } from './infoPrato.entity';
 export class PratoService {
   constructor(private db: DatabaseService) { }
 
-  async findOnePrato(id: number): Promise<Prato> {
+  async findOnePrato(idPrato: number): Promise<Prato> {
     const result = await this.db.query(
       'SELECT * FROM prato WHERE id = $1',
-      [id],
+      [idPrato],
     );
     const prato_found = result.rows[0];
     if (!prato_found) {
-      throw new NotFoundException(`Prato com id ${id} não encontrado`);
+      throw new NotFoundException(`Prato com id ${idPrato} não encontrado`);
     }
     return prato_found as Prato;
   }
@@ -50,7 +50,7 @@ export class PratoService {
     } as infoPrato;
   }
 
-async findAllInfoPratoById(id: number): Promise<infoPrato> {
+async findAllInfoPratoById(idPrato: number): Promise<infoPrato> {
   const result = await this.db.query(
     `
     SELECT 
@@ -69,12 +69,12 @@ async findAllInfoPratoById(id: number): Promise<infoPrato> {
     WHERE p.id = $1
     GROUP BY p.id, p.nome, p.icone
     `,
-    [id]
+    [idPrato],
   );
 
   const prato = result.rows[0];
   if (!prato) {
-    throw new NotFoundException(`Prato com id ${id} não encontrado`);
+    throw new NotFoundException(`Prato com id ${idPrato} não encontrado`);
   }
   return prato;
 }

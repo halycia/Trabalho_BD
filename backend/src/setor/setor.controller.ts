@@ -30,8 +30,8 @@ export class SetorController {
   @GetSetorByIdDocs()
   @Public()
   @Get(':id')
-  async findOneSetor(@Param('id', ParseIntPipe) id: number): Promise<Setor | null> {
-    return this.setorService.findOneSetor(id);
+  async findSetorById(@Param('id', ParseIntPipe) idSetor: number): Promise<Setor | null> {
+    return this.setorService.findSetorById(idSetor);
   }
 
   @GetSetoresByCampusDocs()

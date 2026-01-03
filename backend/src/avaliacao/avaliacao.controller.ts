@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
   ParseIntPipe,
-  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AvaliacaoService } from './avaliacao.service';
@@ -58,8 +57,8 @@ export class AvaliacaoController {
   @GetAvaliacaoByIdDocs()
   @Public()
   @Get(':id')
-  async findById(@Param('id', ParseIntPipe) id: number): Promise<Avaliacao | null> {
-    return this.avaliacaoService.findAvaliacaoById(id);
+  async findById(@Param('id', ParseIntPipe) idAvaliacao: number): Promise<Avaliacao | null> {
+    return this.avaliacaoService.findAvaliacaoById(idAvaliacao);
   }
 
   @GetAvaliacoesByPratoDocs()
@@ -72,19 +71,19 @@ export class AvaliacaoController {
   @UpdateAvaliacaoDocs()
   @Patch(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) idAvaliacao: number,
     @Body() dto: UpdateAvaliacaoDto,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    return this.avaliacaoService.updateAvaliacao(id, dto, parseInt(currentUser.sub));
+    return this.avaliacaoService.updateAvaliacao(idAvaliacao, dto, parseInt(currentUser.sub));
   }
 
   @DeleteAvaliacaoDocs()
   @Delete(':id')
   async delete(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) idAvaliacao: number,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    return this.avaliacaoService.deleteAvaliacao(id, parseInt(currentUser.sub));
+    return this.avaliacaoService.deleteAvaliacao(idAvaliacao, parseInt(currentUser.sub));
   }
 }

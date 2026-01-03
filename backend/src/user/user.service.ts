@@ -2,7 +2,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
-  InternalServerErrorException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateUserDto } from './dto/CreateUserDto';
@@ -12,26 +12,26 @@ import { User } from './user.entity';
 export class UserService {
   constructor(private db: DatabaseService) { }
 
-  async findUserByEmail(email: string): Promise<User> {
+  async findUserByEmail(emailUsuario: string): Promise<User> {
     const result = await this.db.query(
       'SELECT * FROM usuario WHERE email = $1',
-      [email],
+      [emailUsuario],
     );
     const user_found = result.rows[0];
     if (!user_found) {
-      throw new NotFoundException (`Usuário com email ${email} não encontrado`)
+      throw new NotFoundException (`Usuário com email ${emailUsuario} não encontrado`)
     }
     return result.rows[0] as User;
   }
 
-  async findUserById(id: number): Promise<User> {
+  async findUserById(idUsuario: number): Promise<User> {
     const result = await this.db.query(
       'SELECT * FROM usuario WHERE id = $1',
-      [id],
+      [idUsuario],
     );
     const user_found = result.rows[0];
     if (!user_found) {
-      throw new NotFoundException (`Usuário com id ${id} não encontrado`)
+      throw new NotFoundException (`Usuário com id ${idUsuario} não encontrado`)
     }
     return result.rows[0] as User;
   }
@@ -87,12 +87,14 @@ export class UserService {
   }
 
 
-  async updateUser(id: number, updates: UpdateUserDto) {
-    const localUser = await this.findUserById(id);
-
-    if (updates.email && updates.email !== localUser.email) {
+  async updateUser(idUsuario: number, updateDto: UpdateUserDto, id_payload: number) {
+    const localUser = await this.findUserById(idUsuario);
+    if (idUsuario !== id_payload) {
+      throw new ForbiddenException ('Você só pode atualizar seu próprio perfil');
+    }
+    if (updateDto.email && updateDto.email !== localUser.email) {
       try {
-        await this.findUserByEmail(updates.email);
+        await this.findUserByEmail(updateDto.email);
         throw new ConflictException('Email já está em uso');
       } catch (error) {
         if (!(error instanceof NotFoundException)) {
@@ -101,9 +103,9 @@ export class UserService {
       }
     }
 
-    if (updates.username && updates.username !== localUser.username) {
+    if (updateDto.username && updateDto.username !== localUser.username) {
       try {
-        await this.findUserByUsername(updates.username);
+        await this.findUserByUsername(updateDto.username);
         throw new ConflictException('Nome de usuário já está em uso');
       } catch (error) {
         if (!(error instanceof NotFoundException)) {
@@ -111,27 +113,30 @@ export class UserService {
         }
       }
     }
-    const result = await this.db.query(
+    await this.db.query(
         `UPDATE usuario SET nome=$1, email=$2, username=$3, senha=$4 WHERE id = $5`,
         [
-          updates.nome ?? localUser.nome,
-          updates.email ?? localUser.email,
-          updates.username ?? localUser.username,
-          updates.senha ?? localUser.senha,
-          id
+          updateDto.nome ?? localUser.nome,
+          updateDto.email ?? localUser.email,
+          updateDto.username ?? localUser.username,
+          updateDto.senha ?? localUser.senha,
+          idUsuario
         ]
       );
       return { message: "Usuário atualizado com sucesso " };
   }
 
-  async deleteUser(id: number) {
-    const deletingUser = await this.findUserById(id);
-    const result = await this.db.query(
+  async deleteUser(idUsuario: number, id_payload: number) {
+    await this.findUserById(idUsuario);
+    if (idUsuario !== id_payload) {
+      throw new ForbiddenException('Você só pode deletar sua própria conta');
+    }
+    await this.db.query(
       'DELETE FROM usuario WHERE id = $1',
-      [id],
+      [idUsuario],
     );
     return {
-      message: `Usuário com id ${id} deletado com sucesso`,
+      message: `Usuário com id ${idUsuario} deletado com sucesso`,
     }
   }
 }

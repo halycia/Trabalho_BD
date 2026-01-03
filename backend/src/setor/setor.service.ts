@@ -6,14 +6,14 @@ import { CampusService } from 'src/campus/campus.service';
 export class SetorService {
   constructor(private db: DatabaseService  ) { }
   campusService: CampusService = new CampusService(this.db);
-  async findOneSetor(id: number): Promise<Setor> {
+  async findSetorById(idSetor: number): Promise<Setor> {
     const result = await this.db.query(
       'SELECT * FROM setor WHERE id = $1',
-      [id],
+      [idSetor],
     );
     const setor_found = result.rows[0];
     if (!setor_found) {
-      throw new NotFoundException(`Setor com id ${id} não encontrado`);
+      throw new NotFoundException(`Setor com id ${idSetor} não encontrado`);
     }
     return setor_found as Setor;
   }

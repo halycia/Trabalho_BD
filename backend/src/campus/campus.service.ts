@@ -8,14 +8,14 @@ import { Campus } from './campus.entity';
 export class CampusService {
   constructor(private db: DatabaseService) {}
 
-  async findOneCampus(id:number): Promise<Campus> {
+  async findOneCampus(idCampus:number): Promise<Campus> {
     const result = await this.db.query(
       'SELECT * FROM campus WHERE id = $1',
-      [id],
+      [idCampus],
     );
     const campus_found = result.rows[0];
     if (!campus_found) {
-      throw new NotFoundException(`Campus com id ${id} não encontrado`);
+      throw new NotFoundException(`Campus com id ${idCampus} não encontrado`);
     }
     return campus_found as Campus;
   }

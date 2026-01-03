@@ -28,6 +28,7 @@ import {
   DeleteUserDocs,
   GetCurrentUserProfileDocs,
 } from './user.swagger';
+import { parse } from 'path';
 
 @ApiTags('Usuários')
 @Controller('user')
@@ -54,30 +55,34 @@ export class UserController {
   }
 
   @GetAllUsersDocs()
+  @Public()
   @Get()
   async findAll(): Promise<User[]> {
     return await this.userService.findAllUsers();
   }
 
   @GetUserByEmailDocs()
+  @Public()
   @Get('email/:email')
   async findByEmail(@Param('email') email: string): Promise<User> {
     return this.userService.findUserByEmail(email);
   }
 
   @GetUserByUsernameDocs()
+  @Public()
   @Get('username/:username')
   async findByUsername(@Param('username') username: string): Promise<User> {
     return this.userService.findUserByUsername(username);
   }
 
   @GetCurrentUserProfileDocs()
-  @Get('profile')
+  @Get('perfil')
   async getCurrentUserProfile(@CurrentUser() currentUser: UserPayload): Promise<User> {
     return this.userService.findUserById(parseInt(currentUser.sub));
   }
 
   @GetUserByIdDocs()
+  @Public()
   @Get(':id')
   async findUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findUserById(id);
@@ -86,25 +91,19 @@ export class UserController {
   @UpdateUserDocs()
   @Patch(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateUserDto,
+    @Param('id', ParseIntPipe) idUsuario: number,
+    @Body() updateDto: UpdateUserDto,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    if (id !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode atualizar seu próprio perfil');
-    }
-    return this.userService.updateUser(id, dto);
+    return this.userService.updateUser(idUsuario, updateDto, parseInt(currentUser.sub));
   }
 
   @DeleteUserDocs()
   @Delete(':id')
   async delete(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) idUsuario: number,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    if (id !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode deletar sua própria conta');
-    }
-    return this.userService.deleteUser(id);
+    return this.userService.deleteUser(idUsuario, parseInt(currentUser.sub));
   }
 }

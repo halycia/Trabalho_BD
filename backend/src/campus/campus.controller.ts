@@ -3,39 +3,31 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags} from '@nestjs/swagger';
 import { CampusService } from './campus.service';
 import { Campus } from './campus.entity';
 import { Public } from '../auth/decorators/isPublic.decorator';
-
+import {
+  GetAllCampusDocs,
+  GetCampusByIdDocs,
+} from './campus.swagger';
 @ApiTags('Campus')
 @Controller('campus')
 export class CampusController {
   constructor(private readonly campusService: CampusService) { }
 
-  @ApiOperation({ summary: 'Listar todos os campus' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de campus retornada com sucesso',
-  })
+  @GetAllCampusDocs()
   @Public()
   @Get()
   async findAll(): Promise<Campus[]> {
     return await this.campusService.findAllCampus();
   }
 
-  @ApiOperation({ summary: 'Buscar campus por ID' })
-  @ApiParam({ name: 'id', description: 'ID do campus', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'Campus encontrado',
-  })
-  @ApiResponse({ status: 404, description: 'Campus não encontrado' })
+  @GetCampusByIdDocs()
   @Public()
   @Get(':id')
-  async findOneCampus(@Param('id', ParseIntPipe) id: number): Promise<Campus | null> {
-    return this.campusService.findOneCampus(id);
+  async findOneCampus(@Param('id', ParseIntPipe) idCampus: number): Promise<Campus | null> {
+    return this.campusService.findOneCampus(idCampus);
   }
 }

@@ -7,9 +7,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
-  UnauthorizedException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateFeedbackDto } from './dto/CreateFeedbackDto';
@@ -38,60 +35,46 @@ export class FeedbackController {
     @Body() newFeedback: CreateFeedbackDto,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    if (newFeedback.id_usuario !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode criar feedback para si mesmo');
-    }
-    return this.feedbackService.createFeedback(newFeedback);
+    return this.feedbackService.createFeedback(newFeedback, parseInt(currentUser.sub));
   }
 
   @GetAllFeedbacksDocs()
+  @Public()
   @Get()
   async findAllFeedbacks(): Promise<Feedback[]> {
     return this.feedbackService.findAllFeedbacks();
   }
 
   @GetFeedbacksByUserDocs()
+  @Public()
   @Get('user/:idusuario')
-  async findFeedbacksFromUser(@Param('idusuario', ParseIntPipe) idusuario: number): Promise<Feedback[]> {
-    return await this.feedbackService.findAllFeedbacksFromUser(idusuario);
+  async findFeedbacksFromUser(@Param('idusuario', ParseIntPipe) idUsuario: number): Promise<Feedback[]> {
+    return await this.feedbackService.findAllFeedbacksFromUser(idUsuario);
   }
 
   @GetFeedbackByIdDocs()
+  @Public()
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Feedback> {
-    return this.feedbackService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) idFeedback: number): Promise<Feedback> {
+    return this.feedbackService.findOne(idFeedback);
   }
 
   @UpdateFeedbackDocs()
   @Patch(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) idFeedback: number,
     @Body() editedFeedback: UpdateFeedbackDto,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    const feedback = await this.feedbackService.findOne(id);
-    if (!feedback) {
-      throw new ForbiddenException('Feedback não encontrado');
-    }
-    if (feedback.id_usuario !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode editar seus próprios feedbacks');
-    }
-    return this.feedbackService.updateFeedback(id, editedFeedback);
+    return this.feedbackService.updateFeedback(idFeedback, editedFeedback, parseInt(currentUser.sub));
   }
 
   @DeleteFeedbackDocs()
   @Delete(':id')
   async delete(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) idFeedback: number,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    const feedback = await this.feedbackService.findOne(id);
-    if (!feedback) {
-      throw new ForbiddenException('Feedback não encontrado');
-    }
-    if (feedback.id_usuario !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode deletar seus próprios feedbacks');
-    }
-    return this.feedbackService.deleteFeedback(id);
+    return this.feedbackService.deleteFeedback(idFeedback, parseInt(currentUser.sub));
   }
 }

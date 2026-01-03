@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,10 +16,13 @@ export class ComentarioService {
   userService = new UserService(this.db);
   avaliacaoService = new AvaliacaoService(this.db);
 
-  async createComentario(createComentarioDto: CreateComentarioDto) {
+  async createComentario(createComentarioDto: CreateComentarioDto, id_payload:number) {
     await this.userService.findUserById(createComentarioDto.id_usuario);    
     await this.avaliacaoService.findAvaliacaoById(createComentarioDto.id_avaliacao);
-      const result = await this.db.query(
+    if (createComentarioDto.id_usuario !== id_payload) {
+      throw new ForbiddenException('Você só pode criar comentários para si mesmo');
+    }
+      await this.db.query(
       'INSERT INTO comentario (texto, data, id_avaliacao, id_usuario) VALUES ($1, $2, $3, $4)',
       [
         createComentarioDto.texto,
@@ -31,10 +35,10 @@ export class ComentarioService {
   }
 
 
-  async findOne(id: number) {
+  async findOne(idComentario: number) {
     const result = await this.db.query(
       'SELECT * FROM comentario WHERE id = $1',
-      [id],
+      [idComentario],
     );
     if (result.rows[0] == null) {
       throw new NotFoundException('Comentário não encontrado');
@@ -55,8 +59,8 @@ export class ComentarioService {
     return result.rows as Comentario[];
   }
 
-  async updateComentario(id: number, updateComentarioDto: UpdateComentarioDto) {
-    const comentario = await this.findOne(id);
+  async updateComentario(idComentario: number, updateComentarioDto: UpdateComentarioDto, id_payload:number) {
+    const comentario = await this.findOne(idComentario);
     const updatedComentario = {
       ...comentario,
       ...updateComentarioDto,
@@ -64,24 +68,30 @@ export class ComentarioService {
 
     await this.userService.findUserById(updatedComentario.id_usuario);    
     await this.avaliacaoService.findAvaliacaoById(updatedComentario.id_avaliacao);
-    const result = await this.db.query(
+    if (updatedComentario.id_usuario !== id_payload) {
+      throw new ForbiddenException('Você só pode atualizar comentários para si mesmo');
+    }
+    await this.db.query(
       'UPDATE comentario SET texto = $1, data = $2, id_avaliacao = $3, id_usuario = $4 WHERE id = $5',
       [
         updatedComentario.texto,
         updatedComentario.data,
         updatedComentario.id_avaliacao,
         updatedComentario.id_usuario,
-        id,
+        idComentario
       ],
     );
     return { message: "Comentário atualizado com sucesso!" };
   }
 
-  async deleteComentario(id: number) {
-    await this.findOne(id);
-    const result = await this.db.query(
+  async deleteComentario(idComentario: number, id_payload:number) {
+    const comentario =  await this.findOne(idComentario);
+    if (comentario.id_usuario !== id_payload) {
+      throw new ForbiddenException('Você só pode deletar seus próprios comentários');
+    }
+    await this.db.query(
         'DELETE FROM comentario WHERE id = $1',
-        [id],
+        [idComentario],
     );
     return {message:"Comentário excluído com sucesso!"};
   }
