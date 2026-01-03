@@ -64,3 +64,13 @@ export interface infoPrato {
     icone?: string | null,
     qtd_cardapios: number;
 }
+
+export interface infoLogin {
+    email: string;
+    senha: string;
+}
+export interface AuthResponse {
+    access_token: string;
+    user: User;
+}
+

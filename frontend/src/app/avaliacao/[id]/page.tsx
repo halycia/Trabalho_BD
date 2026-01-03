@@ -1,5 +1,5 @@
 'use client';
-
+import {getUserProfile} from "@/utils/api";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
