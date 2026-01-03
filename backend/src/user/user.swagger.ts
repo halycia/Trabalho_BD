@@ -99,6 +99,24 @@ export const UpdateUserDocs = () => applyDecorators(
   AuthRequired()
 );
 
+export const GetCurrentUserProfileDocs = () => applyDecorators(
+  ApiOperation({ 
+    summary: 'Obter perfil do usuário autenticado',
+    description: 'Retorna as informações privadas do usuário atualmente logado. Este endpoint permite ao usuário acessar suas próprias informações sem precisar fornecer seu ID, utilizando apenas o token de autenticação.'
+  }),
+  ApiResponse({
+    status: 200,
+    description: 'Perfil do usuário retornado com sucesso',
+  }),
+  ApiResponse({
+    status: 401,
+    description: 'Token de autenticação inválido ou ausente',
+  }),
+  NotFoundResponse(),
+  InvalidDataResponse(),
+  AuthRequired()
+);
+
 export const DeleteUserDocs = () => applyDecorators(
   ApiOperation({ summary: 'Deletar usuário' }),
   ApiParam({ name: 'id', description: 'ID do usuário', type: 'number' }),

@@ -75,7 +75,7 @@ export class UserService {
     }
     const result = await this.db.query(
       `INSERT INTO usuario (email, username, nome, senha)
-       VALUES ($1, $2, $3, $4)`,
+       VALUES ($1, $2, $3, $4) RETURNING *`,
       [
         novoUsuario.email, 
         novoUsuario.username, 
@@ -83,7 +83,7 @@ export class UserService {
         novoUsuario.senha
       ]
     );
-    return { message: "Usuário criado com sucesso" };
+    return result.rows[0] as User;
   }
 
 

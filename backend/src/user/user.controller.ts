@@ -9,6 +9,7 @@ import {
   Post,
   ForbiddenException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/CreateUserDto';
@@ -25,18 +26,31 @@ import {
   GetUserByIdDocs,
   UpdateUserDocs,
   DeleteUserDocs,
+  GetCurrentUserProfileDocs,
 } from './user.swagger';
 
 @ApiTags('Usuários')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) { }
 
   @CreateUserDocs()
   @Public()
   @Post()
   async create(@Body() dto: CreateUserDto) {
-    return this.userService.createUser(dto);
+    const result = await this.userService.createUser(dto);
+    const token = this.jwtService.sign({ 
+      sub: result.id.toString(), 
+      username: result.username 
+    });
+    
+    return {
+      user: result,
+      access_token: token
+    };
   }
 
   @GetAllUsersDocs()
@@ -57,7 +71,7 @@ export class UserController {
     return this.userService.findUserByUsername(username);
   }
 
-  @GetUserByIdDocs()
+  @GetCurrentUserProfileDocs()
   @Get('profile')
   async getCurrentUserProfile(@CurrentUser() currentUser: UserPayload): Promise<User> {
     return this.userService.findUserById(parseInt(currentUser.sub));

@@ -38,14 +38,11 @@ export class AvaliacaoController {
     @Body() dto: CreateAvaliacaoDto,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    if (dto.id_usuario !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode criar avaliações para si mesmo');
-    }
-    return this.avaliacaoService.createAvaliacao(dto);
+    return this.avaliacaoService.createAvaliacao(dto, parseInt(currentUser.sub));
   }
 
   @GetAllAvaliacoesDocs()
-  @Public() 
+  @Public()
   @Get()
   async findAll(): Promise<Avaliacao[]> {
     return await this.avaliacaoService.findAllAvaliacao();
@@ -88,13 +85,6 @@ export class AvaliacaoController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() currentUser: UserPayload,
   ) {
-    const avaliacao = await this.avaliacaoService.findAvaliacaoById(id);
-    if (!avaliacao) {
-      throw new ForbiddenException('Avaliação não encontrada');
-    }
-    if (avaliacao.id_usuario !== parseInt(currentUser.sub)) {
-      throw new ForbiddenException('Você só pode deletar suas próprias avaliações');
-    }
-    return this.avaliacaoService.deleteAvaliacao(id);
+    return this.avaliacaoService.deleteAvaliacao(id, parseInt(currentUser.sub));
   }
 }

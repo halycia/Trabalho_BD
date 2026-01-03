@@ -15,19 +15,15 @@ export default function Cadastro() {
 
     const handleCadastro = async () => {
         try {
-            await axios.post(`http://localhost:3000/user`, {
+            const response = await axios.post(`http://localhost:3000/user`, {
                 email: emailCadastro,
                 senha: senhaCadastro,
                 username: usernameCadastro,
                 nome: nomeCadastro
             });
 
-            const signUp = await axios.post(`http://localhost:3000/auth/login`, {
-                email: emailCadastro,
-                senha: senhaCadastro
-            });
-            const { token } = signUp.data;
-            localStorage.setItem('token', token);
+            const { access_token } = response.data;
+            localStorage.setItem('token', access_token);
             router.push('/feed');
             toast.success("Cadastro realizado com sucesso!", {
                 autoClose: 2000,

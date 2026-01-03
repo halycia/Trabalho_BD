@@ -58,8 +58,12 @@ export class AvaliacaoService {
         return result.rows as Avaliacao[];
     }
 
-    async createAvaliacao(newAvaliacao: CreateAvaliacaoDto) {
+    async createAvaliacao(newAvaliacao: CreateAvaliacaoDto, id_payload?: number) {
         await this.userService.findUserById(newAvaliacao.id_usuario);
+        await this.pratoService.findOnePrato(newAvaliacao.id_prato);
+        if (id_payload && newAvaliacao.id_usuario !== id_payload) {
+            throw new ForbiddenException('Você só pode criar avaliações para si mesmo');
+        }
         const result = await this.db.query(
                 `INSERT INTO avaliacao (nota, data_avaliacao, data_consumo, texto, id_usuario, id_prato, refeicao)
                 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -72,13 +76,13 @@ export class AvaliacaoService {
                 newAvaliacao.id_prato, 
                 newAvaliacao.refeicao
                 ]);
-        return result.rows[0];
+        return {message: 'Avaliação criada com sucesso.'};
     }
 
-    async updateAvaliacao(id_avaliacao: number, avaliacao: UpdateAvaliacaoDto, userId:number) {
+    async updateAvaliacao(id_avaliacao: number, avaliacao: UpdateAvaliacaoDto, id_payload:number) {
         await this.userService.findUserById(avaliacao.id_usuario);
         const updateAvaliacao = await this.findAvaliacaoById(id_avaliacao);
-        if (updateAvaliacao.id_usuario!== userId) {
+        if (updateAvaliacao.id_usuario!== id_payload) {
             throw new ForbiddenException('Você só pode atualizar suas próprias avaliações');
         }
         const result = await this.db.query(
@@ -94,8 +98,11 @@ export class AvaliacaoService {
         return {message: 'Avaliação atualizada com sucesso.'};
     }
 
-    async deleteAvaliacao(id: number) {
-        await this.findAvaliacaoById(id);
+    async deleteAvaliacao(id: number, id_payload:number) {
+        const deleted_avaliacao = await this.findAvaliacaoById(id);
+        if (deleted_avaliacao.id_usuario !== id_payload) {
+            throw new ForbiddenException('Você só pode deletar suas próprias avaliações');
+        }
         await this.db.query('DELETE FROM avaliacao WHERE id = $1', [id]);
         return {
             message: 'Avaliação deletada com sucesso.'
