@@ -8,7 +8,7 @@ export const api = axios.create({
 
 // Interceptor para adicionar automaticamente o token de autenticação
 api.interceptors.request.use((request) => {
-    const token = localStorage.getItem("acess_token");
+    const token = localStorage.getItem("access_token");
 
     if (token) {
         request.headers.Authorization = `Bearer ${token}`;
@@ -23,7 +23,7 @@ export const getUserById = async (id: number): Promise<User> => {
 }
 
 export const getUserProfile = async (): Promise<User> => {
-    const response = await api.get<User>('/user/profile');
+    const response = await api.get<User>('/user/perfil');
     return response.data;
 }
 
@@ -53,9 +53,19 @@ export const getAllCampuses = async (): Promise<Campus[]> => {
     return response.data;
 }
 
+export const getCampusById = async (idCampus: number): Promise<Campus> => {
+    const response = await api.get<Campus>(`/campus/${idCampus}`);
+    return response.data;
+}
+
 //Funções para chamadas aos endpoints de Setor
 export const getAllSetores = async (): Promise<Setor[]> => {
     const response = await api.get<Setor[]>('/setor');
+    return response.data;
+}
+
+export const getSetorByCampus = async (idCampus: number): Promise<Setor[]> => {
+    const response = await api.get<Setor[]>(`/setor/campus/${idCampus}`);
     return response.data;
 }
 
@@ -98,6 +108,10 @@ export const getAvaliacaoById = async (idAvaliacao: number): Promise<Avaliacao> 
     return response.data;
 }
 
+export const getAvaliacoesByUser = async (idUsuario:number) : Promise <Avaliacao[]> => {
+    const response = await api.get<Avaliacao[]>(`/avaliacao/user/${idUsuario}`);
+    return response.data;
+}
 export const getAvaliacoesByPrato = async (idPrato: number): Promise<Avaliacao[]> => {
     const response = await api.get<Avaliacao[]>(`/avaliacao/prato/${idPrato}`);
     return response.data;

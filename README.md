@@ -128,7 +128,7 @@ npm run dev
 - Obs: o backend deve ser inicializado antes do frontend
 ##  Como o Frontend consome a API 
 
-O frontend Next.js se comunica com a API NestJS através de requisições HTTP usando **Axios**. Esta comunicação segue o padrão REST e utiliza autenticação JWT. O frontend utiliza os endpoints da API, e recebe a resposta para mostrar na interface web (métodos GET), ou envia requisições com argumentos coletados na interface para alterar o banco de dados (métodos POST, PUT e DELETE).  
+O frontend Next.js se comunica com a API NestJS através de requisições HTTP usando **Axios**. Esta comunicação segue o padrão REST e utiliza autenticação JWT. O frontend utiliza os endpoints da API, e recebe a resposta para mostrar na interface web (métodos GET), ou envia requisições com argumentos coletados na interface para alterar o banco de dados (métodos POST, PUT e DELETE). Todos os endpoints da API utilizados pelo frontend estão em funções na pasta "frontend/src/utils/api.ts", que são usadas pelas telas quando é necessário fazer alguma requisição.
 
 ### Fluxo de Autenticação
 

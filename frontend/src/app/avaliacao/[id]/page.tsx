@@ -1,8 +1,16 @@
 'use client';
-import {getUserProfile} from "@/utils/api";
+import {getUserProfile,
+        getUserById, 
+        getAvaliacaoById, 
+        updateAvaliacao,
+        deleteAvaliacao,
+        getComentariosByAvaliacao,
+        getPratoById,
+        createComentario,
+        updateComentario,
+        deleteComentario} from "@/utils/api";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import HeaderLogado from "@/components/headers/logado";
@@ -38,9 +46,7 @@ export default function singleAvalPage() {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const decoded: { sub: number } = jwtDecode(token);
-                    const id = decoded.sub;
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
+                    const userResponse: User = await getUserProfile();
                     setUserInfo(userResponse);
                 }
             } catch (error) {
@@ -54,10 +60,10 @@ export default function singleAvalPage() {
 
     const fetchAvaliacaoAndComentarios = async () => {
         try {
-            const avaliacaoResponse = (await axios.get(`http://localhost:3000/avaliacao/${avaliacaoId}`)).data;
+            const avaliacaoResponse: Avaliacao = await getAvaliacaoById(parseInt(avaliacaoId));
             setAvaliacao(avaliacaoResponse);
 
-            const comentariosResponse = (await axios.get(`http://localhost:3000/comentario/avaliacao/${avaliacaoId}`)).data;
+            const comentariosResponse: Comentario[] = await getComentariosByAvaliacao(parseInt(avaliacaoId));
             setComentarios(comentariosResponse);
         } catch (error: any) {
             toast.error("Erro ao carregar avaliação.");
@@ -68,8 +74,8 @@ export default function singleAvalPage() {
         const findUserPratoAval = async () => {
             try {
                 if (avaliacao && avaliacao.id_usuario) {
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${avaliacao.id_usuario}`)).data;
-                    const pratoAvalResponse: Prato = (await axios.get(`http://localhost:3000/prato/${avaliacao.id_prato}`)).data;
+                    const userResponse: User = await getUserById(avaliacao.id_usuario);
+                    const pratoAvalResponse: Prato = await getPratoById(avaliacao.id_prato);
                     setUserAval(userResponse);
                     setPratoAval(pratoAvalResponse);
                 }
@@ -110,7 +116,7 @@ export default function singleAvalPage() {
                         id_usuario: userInfo.id
                     };
 
-                    await axios.post('http://localhost:3000/comentario', createComment);
+                    await createComentario(createComment);
                     toast.success("Comentário feito com sucesso!", {autoClose: 800});
                     toggleModalNovoComentario();
                     setTimeout (() => {
@@ -127,7 +133,7 @@ export default function singleAvalPage() {
         const fetchUserComentarios = async () => {
             for (const comentario of comentarios) {
                 try {
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${comentario.id_usuario}`)).data;
+                    const userResponse: User = await getUserById(comentario.id_usuario);
                     setUserComentarios(prev => new Map(prev).set(comentario.id, userResponse));
                 } catch (error: any) {
                     toast.error("Erro ao buscar informações do usuário do comentário.");
@@ -141,7 +147,7 @@ export default function singleAvalPage() {
         const confirmDelete = window.confirm("Tem certeza que deseja excluir este comentário? Esta ação não pode ser desfeita");
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:3000/comentario/${comentarioId}`);
+                await deleteComentario(comentarioId);
                 toast.success("Comentário excluído com sucesso!",{autoClose:800});
                 setTimeout(() => {
                     window.location.reload();
@@ -155,9 +161,12 @@ export default function singleAvalPage() {
         if (textoEditComentario.trim() == '') {
             toast.error("O texto do comentário não pode estar vazio.");
         }
+        else if (idComentarioEdit === null) {
+            toast.error("ID do comentário não encontrado.");
+        }
         else {
             try {
-                await axios.patch(`http://localhost:3000/comentario/${idComentarioEdit}`, {
+                await updateComentario(idComentarioEdit, {
                     texto: textoEditComentario,
                     data: new Date().toISOString(),
                     id_avaliacao: avaliacao?.id,
@@ -271,7 +280,7 @@ export default function singleAvalPage() {
 
         const editingAvaliacao = async (avaliacaoEdit: Partial<Avaliacao>, id: number) => {
         try {
-            await axios.patch(`http://localhost:3000/avaliacao/${id}`, avaliacaoEdit);
+            await updateAvaliacao(id, avaliacaoEdit);
             toast.success("Avaliação editada com sucesso!", { autoClose: 2000 });
             setTimeout(() => {
                 window.location.reload();
@@ -392,8 +401,9 @@ export default function singleAvalPage() {
         const confirmDelete = window.confirm("Tem certeza que deseja excluir esta avaliação? Esta ação não pode ser desfeita.");
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:3000/avaliacao/${id}`);
+                await deleteAvaliacao(id);
                 toast.success("Avaliação excluída com sucesso!", { autoClose: 2000 });
+                setTimeout(() => {}, 2500);
                 router.push('/feed');
             } catch (error: any) {
                 toast.error("Erro ao excluir avaliação.");

@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { createUser } from "@/utils/api"
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 
@@ -15,20 +15,19 @@ export default function Cadastro() {
 
     const handleCadastro = async () => {
         try {
-            const response = await axios.post(`http://localhost:3000/user`, {
+            const response = await createUser({
                 email: emailCadastro,
                 senha: senhaCadastro,
                 username: usernameCadastro,
                 nome: nomeCadastro
             });
-
-            const { access_token } = response.data;
-            localStorage.setItem('token', access_token);
-            router.push('/feed');
+            localStorage.setItem('access_token', response.access_token);
             toast.success("Cadastro realizado com sucesso!", {
-                autoClose: 2000,
+                autoClose: 2500
             });
-            
+            setTimeout(() => { }, 1500);
+            router.push('/feed');
+
         } catch (error: any) {
             if (error.response && error.response.status === 409) {
                 if (error.response.data.message === 'Email já cadastrado') {
@@ -39,8 +38,8 @@ export default function Cadastro() {
                     toast.error("Este nome de usuário já está em uso!", {
                         autoClose: 3000,
                     });
-                } 
-            } 
+                }
+            }
             else {
                 toast.error("Erro ao realizar cadastro.", {
                     autoClose: 3000,
@@ -61,70 +60,70 @@ export default function Cadastro() {
                 <div className="w-3/4 max-w-md p-10 rounded-lg shadow-lg">
                     <h1 className="text-2xl font-bold mb-6 text-center cursor-pointer"
                         onClick={() => router.push('/feed')}>
-                         AvaliaRU
+                        AvaliaRU
                     </h1>
 
                     <h2 className="text-2xl font-bold mb-6 text-center">Cadastro</h2>
 
-                <form>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Nome</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="text"
-                            name="nome"
-                            value={nomeCadastro}
-                            onChange={(event)=> setNomeCadastro(event.target.value)}
-                            maxLength={100}
-                            className="pl-2 pb-1 w-full"
-                            required
-                        />
-                    </div>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Email</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="email"
-                            name="email"
-                            value={emailCadastro}
-                            maxLength={100}
-                            onChange={(event) => setEmailCadastro(event.target.value)}
-                            className= "pl-2 pb-1 w-full"
-                            required
-                        />
+                    <form>
+                        <label className=" mb-2 text-sm font-medium text-gray-700">Nome</label>
+                        <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
+                            <input
+                                type="text"
+                                name="nome"
+                                value={nomeCadastro}
+                                onChange={(event) => setNomeCadastro(event.target.value)}
+                                maxLength={100}
+                                className="pl-2 pb-1 w-full"
+                                required
+                            />
+                        </div>
+                        <label className=" mb-2 text-sm font-medium text-gray-700">Email</label>
+                        <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
+                            <input
+                                type="email"
+                                name="email"
+                                value={emailCadastro}
+                                maxLength={100}
+                                onChange={(event) => setEmailCadastro(event.target.value)}
+                                className="pl-2 pb-1 w-full"
+                                required
+                            />
 
-                    </div>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Senha</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="password"
-                            name="senha"
-                            value={senhaCadastro}
-                            onChange={(event) => setSenhaCadastro(event.target.value)}
-                            maxLength={100}
-                            className="pl-2 pb-1 w-full"
-                            required
-                        />
-                    </div>
-                    <label className=" mb-2 text-sm font-medium text-gray-700">Nome de usuário</label>
-                    <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
-                        <input
-                            type="text"
-                            name="username"
-                            value={usernameCadastro}
-                            onChange={(event) => setUsernameCadastro(event.target.value)}
-                            maxLength={70}
-                            className="pl-2 pb-1 w-full"
-                            required
-                        />
-                    </div>
-                    <div className='flex pt-2 flex-col justify-center items-center'>
-                        <button
-                            type="button"
-                            onClick={() => handleCadastro()}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer"
-                        >
-                            Cadastrar
-                        </button>
-                    </div>
+                        </div>
+                        <label className=" mb-2 text-sm font-medium text-gray-700">Senha</label>
+                        <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
+                            <input
+                                type="password"
+                                name="senha"
+                                value={senhaCadastro}
+                                onChange={(event) => setSenhaCadastro(event.target.value)}
+                                maxLength={100}
+                                className="pl-2 pb-1 w-full"
+                                required
+                            />
+                        </div>
+                        <label className=" mb-2 text-sm font-medium text-gray-700">Nome de usuário</label>
+                        <div className="mb-4 border outline-2 outline-gray-100 rounded-lg">
+                            <input
+                                type="text"
+                                name="username"
+                                value={usernameCadastro}
+                                onChange={(event) => setUsernameCadastro(event.target.value)}
+                                maxLength={70}
+                                className="pl-2 pb-1 w-full"
+                                required
+                            />
+                        </div>
+                        <div className='flex pt-2 flex-col justify-center items-center'>
+                            <button
+                                type="button"
+                                onClick={() => handleCadastro()}
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer"
+                            >
+                                Cadastrar
+                            </button>
+                        </div>
                     </form>
 
                     <div className="mt-6 text-center">
