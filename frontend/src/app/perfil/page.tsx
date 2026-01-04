@@ -1,13 +1,11 @@
 'use client';
 
 import { User } from "@/types";
-import { use, useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import HeaderLogado from "@/components/headers/logado";
-
+import { getUserProfile, deleteUser, updateUser, login } from "@/utils/api";
 export default function Perfil() {
     const router = useRouter();
     const [userInfo, setUserInfo] = useState<User | null>(null);
@@ -32,9 +30,9 @@ export default function Perfil() {
     }
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:3000/user/${userInfo?.id}`);
+            await deleteUser(userInfo?.id || 0);
             toast.success("Conta excluída com sucesso!", { autoClose: 2000 });
-            localStorage.removeItem('token');
+            localStorage.removeItem('access_token');
             router.push('/feed');
         } catch (error: any) {
             toast.error("Erro ao excluir conta.");
@@ -44,24 +42,19 @@ export default function Perfil() {
         const confirm = window.confirm("Tem certeza que deseja atualizar suas informações?");
         if (confirm) {
         try {
-            const updateUser = {
+            const updateUserData = {
                 email: emailEdit,
                 username: usernameEdit,
                 nome: nomeEdit,
                 senha: senhaEdit,
             }
                 
-                await axios.patch(`http://localhost:3000/user/${userInfo?.id}`,
-                updateUser
-            );
+            await updateUser(userInfo?.id || 0, updateUserData);
             toast.success("Informações atualizadas com sucesso!", { autoClose: 2000 });
-            const newToken = await axios.post(`http://localhost:3000/auth/login`, {
-                email: updateUser.email,
-                senha: updateUser.senha
-            });
-            const { token } = newToken.data;
-            localStorage.removeItem('token');
-            localStorage.setItem('token', token);
+            const newToken = await login(updateUserData.email, updateUserData.senha);
+            const token = newToken.access_token;
+            localStorage.removeItem('access_token');
+            localStorage.setItem('access_token', token);
             setTimeout(() => {
                 window.location.reload();
             }, 2000);
@@ -83,7 +76,7 @@ export default function Perfil() {
         }
     }}
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             router.push('/login');
         }
@@ -92,11 +85,9 @@ export default function Perfil() {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('access_token');
                 if (token) {
-                    const decoded: { sub: number } = jwtDecode(token);
-                    const id = decoded.sub;
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
+                    const userResponse: User = await getUserProfile();
                     setUserInfo(userResponse);
                 }
             } catch (error) {

@@ -4,11 +4,15 @@ import {useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import HeaderLogado from '../../components/headers/logado';
 import HeaderDeslogado from '@/components/headers/deslogado';
-import axios from 'axios';
 import { toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode';
 import { Campus, Feedback, Prato, Setor, User, Avaliacao, infoPrato } from '@/types';
-
+import {getAllInfoPratos, 
+        getAllPratos, 
+        createAvaliacao, 
+        getUserProfile, 
+        getAllCampuses, 
+        getSetorByCampus, 
+        createFeedback} from "@/utils/api";
 export default function FeedPage() {
     const router = useRouter();
     const [isAuth, setIsAuth] = useState(false);
@@ -32,8 +36,8 @@ export default function FeedPage() {
     useEffect(() => {
         const fetchInfoPrato = async () => {
             try {
-                const response_prato = await axios.get("http://localhost:3000/prato/info");
-                setInfoPrato(response_prato.data);
+                const response_prato = await getAllInfoPratos();
+                setInfoPrato(response_prato);
             } catch (error) {
                 toast.error("Erro ao buscar informações dos pratos");
             }
@@ -45,8 +49,8 @@ export default function FeedPage() {
     useEffect(() => {
         const fetchPratos = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/prato");
-                setPratos(response.data);
+                const response = await getAllPratos();
+                setPratos(response);
             } catch (error) {
                 toast.error("Erro ao buscar pratos");
             }
@@ -65,7 +69,7 @@ export default function FeedPage() {
 
     const creatingAvaliacao = async (avaliacao: Partial<Avaliacao>) => {
         try {
-            await axios.post("http://localhost:3000/avaliacao", avaliacao);
+            await createAvaliacao(avaliacao);
             toast.success("Avaliação criada com sucesso!", { autoClose: 2000 });
             resetAvaliacaoModalFields();
             setTimeout(() => {
@@ -191,11 +195,9 @@ export default function FeedPage() {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('access_token');
                 if (token) {
-                    const decoded: { sub: number } = jwtDecode(token);
-                    const id = decoded.sub;
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
+                    const userResponse: User = await getUserProfile();
                     setUserInfo(userResponse);
                 }
             } catch (error) {
@@ -209,8 +211,8 @@ export default function FeedPage() {
     useEffect(() => {
         const getCampus = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/campus");
-                setCampus(response.data);
+                const response = await getAllCampuses();
+                setCampus(response);
             } catch {
                 toast.error("Erro ao buscar campus");
             }
@@ -223,8 +225,8 @@ export default function FeedPage() {
         try {
             if (campusId !== "-1") {
 
-                const response = await axios.get(`http://localhost:3000/setor/campus/${campusId}`);
-                setSetores(response.data as Setor[]);
+                const response = await getSetorByCampus(Number(campusId));
+                setSetores(response);
             } else {
                 setSetores([]);
             }
@@ -240,7 +242,7 @@ export default function FeedPage() {
                 toast.error("Preencha todos os campos!");
                 return;
             }
-            await axios.post("http://localhost:3000/feedback", feedback);
+            await createFeedback(feedback);
             toast.success("Feedback criado com sucesso!", { autoClose: 2200 });
             resetFeedbackModalFields();
             setTimeout(() => {
@@ -381,7 +383,7 @@ export default function FeedPage() {
 
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             setIsAuth(true);
         }

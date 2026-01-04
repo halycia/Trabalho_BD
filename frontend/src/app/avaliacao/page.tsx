@@ -1,13 +1,19 @@
 'use client';
 
-import { use, useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import HeaderLogado from "@/components/headers/logado";
 import { Avaliacao } from "@/types";
 import { User, Prato } from "@/types";
+import { 
+        getUserProfile,
+        updateAvaliacao,
+        deleteAvaliacao,
+        getPratoById,
+        getAvaliacoesByUser
+    } from "@/utils/api";
 
 export default function AvaliacaoPage() {
     const router = useRouter();
@@ -22,7 +28,7 @@ export default function AvaliacaoPage() {
 
     const editingAvaliacao = async (avaliacaoEdit: Partial<Avaliacao>, id: number) => {
         try {
-            await axios.patch(`http://localhost:3000/avaliacao/${id}`, avaliacaoEdit);
+            await updateAvaliacao(id, avaliacaoEdit);
             toast.success("Avaliação editada com sucesso!", { autoClose: 2000 });
             setTimeout(() => {
                 window.location.reload();
@@ -36,7 +42,7 @@ export default function AvaliacaoPage() {
         const confirmDelete = window.confirm("Tem certeza que deseja excluir esta avaliação? Esta ação não pode ser desfeita.");
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:3000/avaliacao/${id}`);
+                await deleteAvaliacao(id);
                 toast.success("Avaliação excluída com sucesso!", { autoClose: 2000 });
                 setTimeout(() => {
                     window.location.reload();
@@ -53,11 +59,9 @@ export default function AvaliacaoPage() {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('access_token');
                 if (token) {
-                    const decoded: { sub: number } = jwtDecode(token);
-                    const id = decoded.sub;
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
+                    const userResponse: User = await getUserProfile();
                     setUserInfo(userResponse);
                 }
                 else {
@@ -79,8 +83,8 @@ export default function AvaliacaoPage() {
 
     const fetchAvaliacoesUser = async (id: number) => {
         try {
-            const response = await axios.get(`http://localhost:3000/avaliacao/user/${id}`);
-            setAvaliacoes(response.data);
+            const response = await getAvaliacoesByUser(id);
+            setAvaliacoes(response);
         } catch (error) {
             toast.error("Erro ao carregar avaliações.");
         }
@@ -89,8 +93,8 @@ export default function AvaliacaoPage() {
         const findPratosAval = async () => {
             for (const avaliacao of avaliacoes) {
                 console.log('Buscando prato para avaliação ID:', avaliacao.id);
-                const response = await axios.get(`http://localhost:3000/prato/${avaliacao.id_prato}`);
-                const prato = response.data as Prato;
+                const response = await getPratoById(avaliacao.id_prato);
+                const prato = response as Prato;
                 setPratoAvaliacoes(prev => new Map(prev).set(avaliacao.id, prato));
 
             }

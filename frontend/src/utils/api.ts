@@ -59,6 +59,11 @@ export const getCampusById = async (idCampus: number): Promise<Campus> => {
 }
 
 //Funções para chamadas aos endpoints de Setor
+export const getSetorById = async (idSetor: number): Promise<Setor> => {
+    const response = await api.get<Setor>(`/setor/${idSetor}`);
+    return response.data;
+}
+
 export const getAllSetores = async (): Promise<Setor[]> => {
     const response = await api.get<Setor[]>('/setor');
     return response.data;

@@ -1,13 +1,18 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
 import { Feedback, User } from "../../types";
-import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import HeaderLogado from "@/components/headers/logado";
-
-import axios from 'axios';
+import { 
+        getUserProfile, 
+        getFeedbacksByUser,
+        updateFeedback,
+        deleteFeedback,
+        getSetorById,
+        getCampusById,
+         } from '@/utils/api';
 export default function UserFeedback() {
     const [userInfo, setUserInfo] = useState<User | null>(null);
     const router = useRouter();
@@ -28,7 +33,7 @@ export default function UserFeedback() {
         setIsModalEditFeedbackOpen(!isModalEditFeedbackOpen);
     }
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             router.push('/login');
         }
@@ -37,11 +42,9 @@ export default function UserFeedback() {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('access_token');
                 if (token) {
-                    const decoded: { sub: number } = jwtDecode(token);
-                    const id = decoded.sub;
-                    const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
+                    const userResponse: User = await getUserProfile();
                     setUserInfo(userResponse);
                 }
             } catch (error) {
@@ -56,8 +59,8 @@ export default function UserFeedback() {
         const findFeedbacks = async () => {
             try {
                 if (userInfo) {
-                    const response = await axios.get(`http://localhost:3000/feedback/user/${userInfo.id}`);
-                    setFeedbacks(response.data);
+                    const response = await getFeedbacksByUser(userInfo.id);
+                    setFeedbacks(response);
                 }
             } catch (error) {
                 toast.error("Erro ao buscar feedbacks do usuário");
@@ -71,12 +74,12 @@ export default function UserFeedback() {
         const findSetorNomes = async () => {
             try {
                 for (const feedback of feedbacks) {
-                    const response = await axios.get(`http://localhost:3000/setor/${feedback.id_setor}`);
-                    const nomeSetor = response.data.nome;
+                    const response = await getSetorById(feedback.id_setor);
+                    const nomeSetor = response.nome;
                     setNomeSetores(prev => new Map(prev).set(feedback.id, nomeSetor));
-                    const idCampus = response.data.id_campus;
-                    const campus = await axios.get(`http://localhost:3000/campus/${idCampus}`);
-                    const nomeCampus = campus.data.nome;
+                    const idCampus = response.id_campus;
+                    const campus = await getCampusById(idCampus);
+                    const nomeCampus = campus.nome;
                     setNomeCampus(prev => new Map(prev).set(feedback.id_setor, nomeCampus));
 
                 }
@@ -98,7 +101,7 @@ export default function UserFeedback() {
 
     const deleteFeedback = async (id: number) => {
         try {
-            await axios.delete(`http://localhost:3000/feedback/${id}`);
+            await deleteFeedback(id);
             toast.success("Feedback deletado com sucesso!");
             setTimeout(() => {
                 window.location.reload();
@@ -120,7 +123,7 @@ export default function UserFeedback() {
                 toast.error("Preencha todos os campos!");
                 return;
             }
-            await axios.patch(`http://localhost:3000/feedback/${id}`, feedback);
+            await updateFeedback(id, feedback);
             toast.success("Feedback editado com sucesso!", { autoClose: 2200 });
             resetEditFeedbackModalFields();
             setTimeout(() => {

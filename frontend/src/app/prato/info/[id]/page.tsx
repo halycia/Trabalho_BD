@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 import HeaderLogado from '@/components/headers/logado';
 import HeaderDeslogado from '@/components/headers/deslogado';
+import { getUserById, getUserProfile, getInfoPratoById, getAllPratos, getAvaliacoesByPrato, createAvaliacao } from '@/utils/api';
 import { Prato, User, Avaliacao, infoPrato } from '@/types';
 
 export default function PratoPage() {
@@ -17,9 +16,6 @@ export default function PratoPage() {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [prato, setPrato] = useState<infoPrato | null>(null);
   const [loading, setLoading] = useState(true);
-  //const params = useParams();
-
-  // Estados do modal de avaliação
   const [pratos, setPratos] = useState<Prato[]>([]);
   const [isModalAvaliacaoOpen, setIsModalAvaliacaoOpen] = useState(false);
   const [textoAvaliacao, setTextoAvaliacao] = useState("");
@@ -29,47 +25,38 @@ export default function PratoPage() {
   const [pratoAvaliacao, setPratoAvaliacao] = useState<Prato | null>(null);
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [userAvaliacoes, setUserAvaliacao] = useState<Map<number, User>>(new Map());
-  // Autenticação e carregamento inicial
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuth(true);
-      const decoded: { sub: number } = jwtDecode(token);
-      const idUser = decoded.sub;
-      axios.get(`http://localhost:3000/user/${idUser}`).then(res => setUserInfo(res.data));
-    }
-  }, []);
 
   useEffect(() => {
     const fetchPratoInfo = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/prato/info/${id}`);
-        console.log(response.data);
-        setPrato(response.data);
+        const response = await getInfoPratoById(Number(id));
+        setPrato(response);
       } catch {
         toast.error("Erro ao buscar prato.");
       } finally {
         setLoading(false);
       }
-      axios.get(`http://localhost:3000/prato`).then(res => setPratos(res.data));
+      const responsePratos = await getAllPratos();
+      setPratos(responsePratos);
     };
     fetchPratoInfo();
   }, [id]);
 
   useEffect(() => {
-    if (!id) return;
-
-    axios.get(`http://localhost:3000/avaliacao/prato/${id}`)
-      .then(res => setAvaliacoes(res.data))
-      .catch(() => toast.error("Erro ao buscar avaliações."));
+    const fetchAvaliacoes = async () => {
+      if (!id) return;
+      const responseAvaliacoes = await getAvaliacoesByPrato(Number(id));
+      setAvaliacoes(responseAvaliacoes);
+    };
+    fetchAvaliacoes();
   }, [id]);
 
   useEffect(() => {
     const fetchUsers = async () => {
       for (const avaliacao of avaliacoes) {
         const userId = avaliacao.id_usuario;
-        const userResponse = await axios.get(`http://localhost:3000/user/${userId}`);
-        setUserAvaliacao(prev => new Map(prev).set(avaliacao.id, userResponse.data));
+        const userResponse = await getUserById(userId);
+        setUserAvaliacao(prev => new Map(prev).set(avaliacao.id, userResponse));
       }
     };
     fetchUsers();
@@ -85,7 +72,7 @@ export default function PratoPage() {
 
   const creatingAvaliacao = async (avaliacao: Partial<Avaliacao>) => {
     try {
-      await axios.post("http://localhost:3000/avaliacao", avaliacao);
+      await createAvaliacao(avaliacao);
       toast.success("Avaliação criada com sucesso!", { autoClose: 2000 });
       resetAvaliacaoModalFields();
       setTimeout(() => {
@@ -192,11 +179,9 @@ export default function PratoPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         if (token) {
-          const decoded: { sub: number } = jwtDecode(token);
-          const id = decoded.sub;
-          const userResponse: User = (await axios.get(`http://localhost:3000/user/${id}`)).data;
+          const userResponse: User = await getUserProfile();
           setUserInfo(userResponse);
         }
       } catch (error) {
@@ -208,7 +193,7 @@ export default function PratoPage() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (token) {
       setIsAuth(true);
     }

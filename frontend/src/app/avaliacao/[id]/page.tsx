@@ -44,7 +44,7 @@ export default function singleAvalPage() {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('access_token');
                 if (token) {
                     const userResponse: User = await getUserProfile();
                     setUserInfo(userResponse);

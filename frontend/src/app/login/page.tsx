@@ -1,17 +1,16 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-
+import {login} from "@/utils/api";
 export default function LoginPage() {
     const [emailLogin, setEmailLogin] = useState('');
     const [senhaLogin, setSenhaLogin] = useState('');
     const router = useRouter();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("access_token");
         if (token) {
             router.push('/feed');
         }
@@ -19,13 +18,10 @@ export default function LoginPage() {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post(`http://localhost:3000/auth/login`, {
-                email: emailLogin,
-                senha: senhaLogin
-            });
+            const response = await login(emailLogin,senhaLogin);
 
-            const { token } = response.data;
-            localStorage.setItem('token', token);
+            const token = response.access_token;
+            localStorage.setItem('access_token', token);
 
             toast.success("Login realizado com sucesso!", {
                 autoClose: 2000,
